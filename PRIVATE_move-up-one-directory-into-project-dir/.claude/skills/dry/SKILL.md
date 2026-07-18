@@ -1,17 +1,15 @@
 ---
-name: verda-dry
-description: Dry — Docker TUI for managing containers on Verda.
+name: dry
+description: Dry — Docker TUI for managing containers on a remote host. Reminds the user how to launch it and gives non-interactive equivalents Claude can run.
 user-invocable: true
-version: 1.1.0
+version: 1.0.0
 ---
 
-Dry — Docker TUI for managing containers on Verda.
+Dry — Docker TUI for managing containers on the Docker host.
 
-**First:** Read `VERDA_PUBLIC_IP` from `.env` in the project root. Use it as `$VERDA_IP` below.
-
-**Server:** root@$VERDA_IP
+**Server:** [ SSH COMMAND / HOST, e.g. `user@host` — or run locally if Docker is on this box ]
 **Docs:** https://moncho.github.io/dry/
-**Launch:** `ssh -t root@$VERDA_IP "dry"` (needs -t for TTY)
+**Launch:** `ssh -t [ SSH HOST ] "dry"` (needs -t for TTY)
 
 NOTE: Dry is a TUI (terminal UI) — it requires an interactive terminal.
 Claude cannot interact with it directly. Use this skill to:
@@ -34,19 +32,21 @@ Claude cannot interact with it directly. Use this skill to:
 
 ## Non-Interactive Alternatives (for Claude)
 
+Container names below assume a common prefix, e.g. `[ CONTAINER PREFIX ]-<name>`.
+
 ```bash
 # Container list (like dry main screen)
-ssh root@$VERDA_IP "docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}' | sort"
+ssh [ SSH HOST ] "docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}' | sort"
 
 # Container stats (like dry 's' key)
-ssh root@$VERDA_IP "docker stats --no-stream --format 'table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}' | sort"
+ssh [ SSH HOST ] "docker stats --no-stream --format 'table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}' | sort"
 
 # Container inspect (like dry 'Enter')
-ssh root@$VERDA_IP "docker inspect comfy-$ARGUMENTS 2>/dev/null | python3 -m json.tool | head -50"
+ssh [ SSH HOST ] "docker inspect [ CONTAINER PREFIX ]-$ARGUMENTS 2>/dev/null | python3 -m json.tool | head -50"
 
 # Container logs (like dry 'l')
-ssh root@$VERDA_IP "docker logs comfy-$ARGUMENTS --tail 30 2>&1"
+ssh [ SSH HOST ] "docker logs [ CONTAINER PREFIX ]-$ARGUMENTS --tail 30 2>&1"
 ```
 
 If $ARGUMENTS provided, run the non-interactive equivalent for that container.
-Otherwise tell the user to run `ssh -t root@$VERDA_IP "dry"`.
+Otherwise tell the user to run `ssh -t [ SSH HOST ] "dry"`.

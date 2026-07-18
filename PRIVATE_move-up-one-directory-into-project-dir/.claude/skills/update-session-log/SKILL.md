@@ -15,11 +15,11 @@ Prepend a **newest-first** entry to `all-teams-session-log.md` (repo root).
    `basename "$(ls -t ~/.claude/projects/<encoded-project>/*.jsonl | head -1)" .jsonl`
 3. **Prepend the entry** at the top of the list:
    ```
-   - **<team-name>** · <YYYY-MM-DD HH:MM> UTC · resume `<session-id>`
+   - **[ TEAM NAME ]** · <YYYY-MM-DD HH:MM> UTC · resume `<session-id>`
      — 1–2 line terse summary of what changed / was decided.
-     → links: `path/to/file` · #issue · <commit-sha> · ../PRIVATE/… · ../agent_docs/…
+     → links: `path/to/file` · #issue · <commit-sha> · [ PATH/TO/DETAIL DOCS ]
    ```
 4. **Terse — link, don't repeat.** Point to where the detail lives, don't restate it.
-5. **No commit needed for the log itself** — `all-teams-session-log.md` is a
-   gitignored symlink into `../PRIVATE/.claude/agent_docs/untracked/`; writing
-   the file IS the update. (Commit/push only whatever *repo* changes rode along.)
+5. [ ADAPT: decide whether the log is tracked in git (commit it with the session's
+   changes) or lives outside the repo (e.g. a gitignored symlink into a private
+   dir — then writing the file IS the update). ]

@@ -1,60 +1,19 @@
 {
-  "last_updated": "2026-02-12T05:50:00Z",
-  "iteration": 4,
+  "_comment": "EXAMPLE Ralph QA-loop state file. Machine-written during a loop run; this is a blank skeleton. ADAPT: replace the example workflow/criteria names with your project's QA targets.",
+  "last_updated": "1970-01-01T00:00:00Z",
+  "iteration": 0,
   "current_workflow": 1,
-  "phase": "passed",
+  "phase": "not-started",
   "workflows": {
-    "1_flux2_klein_9b": {
-      "status": "passed",
-      "file": "flux2_klein_9b_text_to_image.json",
-      "criteria_passed": ["load", "queue_response", "status_banner", "qm_serverless", "no_js_errors", "output_display", "queue_history", "sidebar_assets"],
+    "1_example_workflow": {
+      "status": "pending",
+      "file": "[ WORKFLOW OR TEST FILE ]",
+      "criteria_passed": [],
       "criteria_failed": [],
-      "notes": "All criteria passing. Image delivery fix: updated Verda container start command via Verda SDK to add --output-directory /mnt/sfs/outputs. Fixed SFS directory permissions to 1777. Image saves to SFS, QM copies to local /outputs/user001/, frontend serves via /api/view."
+      "notes": ""
     }
   },
-  "bugs_found": [
-    {
-      "id": "BUG-001",
-      "title": "Image delivery gap — QM never fetches generated images from serverless",
-      "root_cause": "submit_to_serverless() only POSTs /prompt, never fetches /api/history/{prompt_id} or /api/view to get actual images",
-      "status": "fixed",
-      "fix_approach": "3-part coordinated fix: QM fetches images, server-side proxy for native queue, output dir symlink",
-      "severity": "blocker",
-      "affects_all_workflows": true
-    },
-    {
-      "id": "BUG-002",
-      "title": "SFS outputs directory not writable by serverless container",
-      "root_cause": "mkdir created /mnt/sfs/outputs with 755 root:root permissions. ComfyUI runs as non-root (uid 1000) and cannot write.",
-      "status": "fixed",
-      "fix_approach": "chmod 1777 /mnt/sfs/outputs (sticky + world-writable). Updated wrapper script.",
-      "severity": "blocker"
-    },
-    {
-      "id": "BUG-003",
-      "title": "Serverless container startup doesn't include --output-directory",
-      "root_cause": "Verda container start command configured via Verda Console only had --listen, --port, --extra-model-paths-config. No --output-directory flag, so ComfyUI saves to /workspace/ComfyUI/output/ (container-local, not SFS).",
-      "status": "fixed",
-      "fix_approach": "Updated Verda deployment via Verda SDK: added --output-directory /mnt/sfs/outputs to cmd array.",
-      "severity": "blocker"
-    }
-  ],
-  "fixes_applied": [
-    "redirect.js: status banner for GPU progress feedback (PR #14)",
-    "Dockerfile: self-healing custom nodes mechanism (c613a06)",
-    "extensions.conf: config-driven extension deployment (PR #15)",
-    "nginx: dynamic DNS resolution (93bf1a1)",
-    "feat: image delivery gap fix — serverless proxy + QM image fetching (PR #23)",
-    "fix: set history_result in serverless proxy for ComfyUI v0.11.0 (PR #25)",
-    "fix: improve serverless polling diagnostics and timeouts (PR #26)",
-    "fix: increase poll timeout to 600s, reduce per-request to 10s (PR #27)",
-    "feat: SFS-based image delivery for serverless mode (PR #28)",
-    "fix: SFS /mnt/sfs/outputs permissions to 1777 (server-side)",
-    "fix: Verda container start command updated with --output-directory /mnt/sfs/outputs (Verda SDK)"
-  ],
-  "known_issues": [
-    "Cold start takes 5+ min (model loading on fresh H200 instance)",
-    "Old queue history entries show broken thumbnails (from pre-fix runs)",
-    "default_workflow_loader DISABLED: canvas null errors"
-  ]
+  "bugs_found": [],
+  "fixes_applied": [],
+  "known_issues": []
 }

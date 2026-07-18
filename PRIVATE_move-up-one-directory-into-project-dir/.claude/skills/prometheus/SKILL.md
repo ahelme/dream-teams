@@ -1,56 +1,60 @@
 ---
-name: verda-prometheus
-description: Prometheus monitoring on Verda — metrics collection and querying.
+name: prometheus
+description: Prometheus monitoring — metrics collection, PromQL querying, config reload, targets.
 user-invocable: true
-version: 1.1.0
+version: 1.0.0
 ---
 
-Prometheus monitoring on Verda — metrics collection and querying.
+Prometheus monitoring — metrics collection and querying.
 
-**First:** Read `VERDA_PUBLIC_IP` from `.env` in the project root. Use it as `$VERDA_IP` below.
+[ MONITORING STACK DETAILS HERE — host/SSH access, port, data dir,
+retention, scrape targets ]
 
-**Server:** root@$VERDA_IP
-**Port:** 9090
+**Server:** [ SSH COMMAND / HOST — or run locally ]
+**Port:** 9090 (default)
 **Config:** `/etc/prometheus/prometheus.yml`
-**Data:** `/var/lib/prometheus/` (7-day retention)
+**Data:** `/var/lib/prometheus/` ([ RETENTION ])
 **Service:** `systemctl {start|stop|restart|status} prometheus`
+
+Commands below assume Prometheus on `localhost:9090` — prefix with
+`ssh [ SSH HOST ]` if remote. Container examples use `[ CONTAINER PREFIX ]`.
 
 ## Common Operations
 
 ```bash
 # Check targets
-ssh root@$VERDA_IP "curl -s localhost:9090/api/v1/targets | python3 -m json.tool | head -30"
+curl -s localhost:9090/api/v1/targets | python3 -m json.tool | head -30
 
 # Query a metric (PromQL via API)
-ssh root@$VERDA_IP "curl -s 'localhost:9090/api/v1/query?query=up' | python3 -m json.tool"
+curl -s 'localhost:9090/api/v1/query?query=up' | python3 -m json.tool
 
 # Check config
-ssh root@$VERDA_IP "cat /etc/prometheus/prometheus.yml"
+cat /etc/prometheus/prometheus.yml
 
 # Reload config without restart
-ssh root@$VERDA_IP "curl -X POST localhost:9090/-/reload"
+curl -X POST localhost:9090/-/reload
 
 # Check storage usage
-ssh root@$VERDA_IP "du -sh /var/lib/prometheus/"
+du -sh /var/lib/prometheus/
 ```
 
 ## Useful PromQL Queries
 
 ```promql
 # Container CPU usage
-rate(container_cpu_usage_seconds_total{name=~"comfy-.*"}[5m])
+rate(container_cpu_usage_seconds_total{name=~"[ CONTAINER PREFIX ]-.*"}[5m])
 
 # Container memory usage
-container_memory_usage_bytes{name=~"comfy-.*"}
+container_memory_usage_bytes{name=~"[ CONTAINER PREFIX ]-.*"}
 
 # Container network I/O
-rate(container_network_receive_bytes_total{name=~"comfy-.*"}[5m])
+rate(container_network_receive_bytes_total{name=~"[ CONTAINER PREFIX ]-.*"}[5m])
 
-# Filesystem usage (for SFS/block storage debugging)
-container_fs_usage_bytes{name=~"comfy-.*"}
+# Filesystem usage
+container_fs_usage_bytes{name=~"[ CONTAINER PREFIX ]-.*"}
 
-# Container restart count
-container_start_time_seconds{name=~"comfy-.*"}
+# Container start time (restart debugging)
+container_start_time_seconds{name=~"[ CONTAINER PREFIX ]-.*"}
 
 # All targets up/down
 up
@@ -59,7 +63,7 @@ up
 ## Scrape Targets
 
 - `prometheus` (self, localhost:9090)
-- `cadvisor` (Docker metrics, localhost:8081)
+- `cadvisor` (Docker metrics) [ ADAPT: port and any additional targets ]
 
 To add more targets, edit `/etc/prometheus/prometheus.yml` and reload.
 

@@ -1,34 +1,23 @@
 ---
 name: rb
-description: Rotate branch — rename current team branch date suffix to match today's AEDT date. Use at session start when branch date doesn't match AEDT, or when user says "rotate branch", "update branch", "rename branch to today", or "/rb".
+description: Rotate branch — rename current team branch date suffix to match today's date. Use at session start when the branch date is stale, or when user says "rotate branch", "update branch", "rename branch to today", or "/rb".
 user-invocable: true
 version: 1.1.0
 ---
 
 # Rotate Branch
 
-Team branches (from 2026-04-17): `[deploy-branch]-[team-short]-YYYY-MM-DD`. Date suffix must match current AEDT date.
+Team branches follow [ TEAM BRANCH PATTERN ]: `[base-branch]-[team-short]-YYYY-MM-DD` (e.g. `testing-<team>-2026-01-05` off [ INTEGRATION BRANCH ], `main-<team>-2026-01-05` off [ MAIN BRANCH ] for prod patches). Date suffix must match today's date in [ TIMEZONE ].
 
-**Team shorts:** `adm` · `cui` · `sys` · `ralph` · `verda` · `rev`
-
-(Mapping: `adm`=ADM/Admin Panel, `cui`=CUI/ComfyUI, `sys`=SYS/Systems & Ops, `rev`=REV/Review, `ralph`=Ralph, `verda`=Verda.)
-
-**Examples:**
-- `testing-adm-2026-04-17` (ADM team off all-teams-testing)
-- `testing-cui-2026-04-17` (CUI team off all-teams-testing)
-- `main-adm-2026-04-17` (ADM off main — e.g. for prod patches)
-
-**Legacy pattern** (pre-2026-04-17): `testing-mello-admin-panel-team-YYYY-MM-DD` etc. Still supported — convert to new short form during rotation.
+**Team shorts:** [ ADAPT: list your team short codes and their meanings ]
 
 ## Steps
 
-1. Get AEDT date: `TZ=Australia/Sydney date '+%Y-%m-%d'`
+1. Get today's date: `TZ=[ TIMEZONE ] date '+%Y-%m-%d'`
 2. Get branch: `git branch --show-current` — extract trailing `YYYY-MM-DD`
-3. If dates match AND branch already uses new short form → "Branch is current." Stop.
+3. If dates match → "Branch is current." Stop.
 4. If no `YYYY-MM-DD` suffix → warn, stop.
-5. Compute new name:
-   - If current branch uses legacy long form (e.g. `testing-mello-admin-panel-team-<date>`), convert to new short form (e.g. `testing-adm-<today>`)
-   - Else keep the same `[deploy]-[short]` prefix, just update the date
+5. Compute new name: keep the same `[base]-[short]` prefix, just update the date
 6. Rename + push:
    ```bash
    git branch -m <old> <new>

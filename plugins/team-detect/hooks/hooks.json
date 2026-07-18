@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/team-detect.sh",
+            "statusMessage": "Detecting team & loading context..."
+          }
+        ]
+      }
+    ]
+  }
+}

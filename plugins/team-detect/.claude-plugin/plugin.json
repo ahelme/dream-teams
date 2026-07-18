@@ -1,0 +1,5 @@
+{
+  "name": "team-detect",
+  "version": "1.0.0",
+  "description": "Detects team context from project directory and invokes the matching resume-context skill on SessionStart"
+}

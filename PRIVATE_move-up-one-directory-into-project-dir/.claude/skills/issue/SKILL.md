@@ -1,6 +1,6 @@
 ---
 name: issue
-description: Analyzes and fixes a GitHub issue end-to-end — checks Sentry, reads the issue, empathizes with the affected user, sketches a design, implements, tests, and documents. Use when the user asks to fix or work a specific GitHub issue by number.
+description: Analyzes and fixes a GitHub issue end-to-end — checks health/error tracking, reads the issue, empathizes with the affected user, sketches a design, implements, tests, and documents. Use when the user asks to fix or work a specific GitHub issue by number.
 user-invocable: true
 version: 1.1.0
 ---
@@ -9,10 +9,10 @@ Please analyze and fix the GitHub issue: $ARGUMENTS.
 
 Follow these steps:
 
-1. Run `/health-check` to check if the issue is showing up in Sentry (recent errors, affected environments)
+1. Run `/health-check` to check if the issue is showing up in your error tracker (e.g. Sentry) — recent errors, affected environments
 2. Use `gh issue view` to get the issue details
-2. Understand the problem described in the issue - take a few moments to consider the details.
-   - Who are the users of this software? i
+3. Understand the problem described in the issue - take a few moments to consider the details.
+   - Who are the users of this software?
    - What kind of situation will they be in using this app or function?
    - What else will they be juggling while doing the task involved?
    - Imagine being one of those user's yourself. Give yourself an identity and a goal.

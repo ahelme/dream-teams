@@ -1,0 +1,5 @@
+{
+  "name": "teams-chat",
+  "version": "1.0.0",
+  "description": "Per-team Slack identity and chat integration via a pluggable Slack transport (pantalk, webhook curl, or your own CLI). Provides load-profile, post-slack, set-profile scripts and milestone auto-echo hook."
+}

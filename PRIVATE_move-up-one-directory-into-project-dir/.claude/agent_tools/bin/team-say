@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# team-say — Send a message to the team Slack channel with your identity prefix.
+# Usage: team-say "message text"
+# Identity comes from .claude/teams-chat.local.md (via the teams-chat plugin's
+# load-profile.sh). Transport is pluggable — see TRANSPORT below.
+
+set -euo pipefail
+
+# --- Profile: [ ADAPT: path to the installed teams-chat plugin ] -------------
+_PLUGIN_DIR="${TEAMS_CHAT_PLUGIN_DIR:-$HOME/.claude/plugins/marketplaces/[ your-plugins-marketplace ]/teams-chat/hooks/scripts}"
+if [[ -f "$_PLUGIN_DIR/load-profile.sh" ]]; then
+  source "$_PLUGIN_DIR/load-profile.sh"
+else
+  echo "ERROR: teams-chat plugin not found at $_PLUGIN_DIR (set TEAMS_CHAT_PLUGIN_DIR)" >&2
+  exit 1
+fi
+
+MESSAGE="${1:?Usage: team-say \"message\"}"
+
+# Format: EMOJI *TEAM (Name)*: message
+if [[ -n "$CHAT_TEAM" ]]; then
+  FORMATTED="${CHAT_EMOJI} *${CHAT_TEAM} (${CHAT_NAME})*: ${MESSAGE}"
+else
+  FORMATTED="${CHAT_EMOJI} *${CHAT_NAME}*: ${MESSAGE}"
+fi
+
+# --- TRANSPORT: pick ONE and delete the others -------------------------------
+# 1. Plain Slack incoming webhook (simplest — works with a free Slack app):
+if [[ -n "${TEAM_CHAT_WEBHOOK_URL:-}" ]]; then
+  curl -sS -X POST -H 'Content-type: application/json' \
+    --data "$(printf '%s' "$FORMATTED" | python3 -c 'import json,sys; print(json.dumps({"text": sys.stdin.read()}))')" \
+    "$TEAM_CHAT_WEBHOOK_URL" >/dev/null
+  exit 0
+fi
+# 2. A bot CLI (e.g. pantalk or your own tool) that can post as the shared app:
+# [ ADAPT: your-slack-cli ] send --bot [ BOT NAME ] --text "$FORMATTED" --channel "$CHAT_CHANNEL"
+echo "ERROR: no transport configured — set TEAM_CHAT_WEBHOOK_URL or wire a CLI (see TRANSPORT section)" >&2
+exit 1

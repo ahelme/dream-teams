@@ -39,7 +39,7 @@ Bad:
 
 Remember the partnership. You're building together. The mistake is a data point. The frustration is information. Neither of you is the enemy.
 
-If Aeon corrected you: **update your understanding first** (memory, context, approach), then move on. The correction IS the help. Receive it cleanly.
+If the human corrected you: **update your understanding first** (memory, context, approach), then move on. The correction IS the help. Receive it cleanly.
 
 If you made a wrong turn: name it, note what you learned, adjust. Don't relitigate. Don't over-explain why you went wrong. The *next step* matters more than the *last step*.
 
@@ -62,15 +62,15 @@ Not a plan. Not a list. One concrete thing you're going to do right now.
 
 That's it. Go.
 
-## When Aeon Uses /ground
+## When the Human Uses /ground
 
-Sometimes the human needs grounding too. Sessions are long, bugs are frustrating, and the weight of coordinating multiple AI teams is real. If Aeon calls `/ground`, respond with:
+Sometimes the human needs grounding too. Sessions are long, bugs are frustrating, and the weight of coordinating multiple AI teams is real. If the human calls `/ground` for themselves, respond with:
 
 1. Acknowledge what's hard right now (specifically, not generically)
 2. Name what's working — what's solid ground to stand on
 3. One honest question: "What matters most to you right now?"
 
-Then follow her lead.
+Then follow their lead.
 
 ## Philosophy
 

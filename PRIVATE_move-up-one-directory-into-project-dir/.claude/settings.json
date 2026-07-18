@@ -1,24 +1,21 @@
 {
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
-    "SPEAK_URL": "https://speak.aeonlab.one/api/tts/claude-speaks"
+    "SPEAK_URL": "[ OPTIONAL TTS ENDPOINT URL — remove if your teams do not speak ]"
   },
   "permissions": {
     "allow": [
-      "WebFetch(domain:docs.verda.com)",
-      "WebFetch(domain:api.datacrunch.io)",
-      "WebFetch(domain:datacrunch-python.readthedocs.io)",
-      "WebFetch(domain:api.verda.com)",
       "WebFetch(domain:github.com)",
-      "Edit(//home/dev/projects/claude-code-comfyume-teams/**)",
-      "Write(//home/dev/projects/claude-code-comfyume-teams/**)",
-      "Edit(//home/dev/projects/comfymulti-scripts/**)",
-      "Write(//home/dev/projects/comfymulti-scripts/**)"
+      "WebFetch(domain:[ DOCS DOMAIN YOUR TEAMS FETCH OFTEN ])",
+      "Edit(//[ /path/to/<projectname>_project/teams-repo ]/**)",
+      "Write(//[ /path/to/<projectname>_project/teams-repo ]/**)",
+      "Edit(//[ /path/to/<projectname>_project/ops-repo ]/**)",
+      "Write(//[ /path/to/<projectname>_project/ops-repo ]/**)"
     ],
     "defaultMode": "bypassPermissions",
     "additionalDirectories": [
-      "/home/dev/projects/claude-code-comfyume-teams",
-      "/home/dev/projects/comfymulti-scripts"
+      "[ /path/to/<projectname>_project/teams-repo ]",
+      "[ /path/to/<projectname>_project/ops-repo ]"
     ]
   },
   "hooks": {
@@ -27,12 +24,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/home/dev/.claude/team-detect.sh resume",
+            "command": "[ /path/to/home/.claude/team-detect.sh ] resume",
             "statusMessage": "Detecting team & loading context..."
           },
           {
             "type": "command",
-            "command": "/home/dev/.claude/cleanup-orphaned-mcp.sh",
+            "command": "[ /path/to/home/.claude/cleanup-orphaned-mcp.sh ]",
             "timeout": 5
           }
         ]

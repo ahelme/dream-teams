@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# team-hear — Read recent messages from the team Slack channel.
+# Usage: team-hear [limit]     (default: 10 messages)
+#
+# Reading requires a bot/user token with channel history scope — an incoming
+# webhook cannot read. Wire ONE transport below.
+
+set -euo pipefail
+
+LIMIT="${1:-10}"
+CHANNEL="${TEAM_CHAT_CHANNEL_ID:-[ SLACK CHANNEL ID ]}"
+
+# 1. Slack Web API with a bot token (conversations.history):
+if [[ -n "${TEAM_CHAT_BOT_TOKEN:-}" ]]; then
+  curl -sS -H "Authorization: Bearer $TEAM_CHAT_BOT_TOKEN" \
+    "https://slack.com/api/conversations.history?channel=${CHANNEL}&limit=${LIMIT}" |
+    python3 -c 'import json,sys; d=json.load(sys.stdin); [print(m.get("text","")) for m in reversed(d.get("messages",[]))]'
+  exit 0
+fi
+# 2. A bot CLI (e.g. pantalk or your own tool):
+# [ ADAPT: your-slack-cli ] history --bot [ BOT NAME ] --channel "$CHANNEL" --limit "$LIMIT"
+echo "ERROR: no transport configured — set TEAM_CHAT_BOT_TOKEN (+ TEAM_CHAT_CHANNEL_ID) or wire a CLI" >&2
+exit 1

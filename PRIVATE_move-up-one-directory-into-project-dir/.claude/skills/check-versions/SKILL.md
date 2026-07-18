@@ -16,9 +16,9 @@ version: 1.1.0
 # /check-versions — Version Verification Gate
 
 **WHY THIS EXISTS:** Claude's training data has a cutoff. It will confidently state
-release dates and "latest" versions that are WRONG. A previous Claude wrote
-"ComfyUI v0.11.0 released Jan 25, 2026" — the real release was ~2024. This pinned
-us 17 versions behind and blocked LTX 2.3 workflows for months.
+release dates and "latest" versions that are WRONG. Fabricated release dates have
+previously justified keeping a project pinned many releases behind, blocking
+features for months.
 
 **RULE: Never trust training knowledge for version currency. Always verify live.**
 
@@ -77,10 +77,10 @@ curl -s "https://hub.docker.com/v2/repositories/library/<image>/tags/?page_size=
 ### 3. Present comparison table
 
 ```
-| Package    | Pinned  | Latest Stable | Released   | Gap              |
-|------------|---------|---------------|------------|------------------|
-| ComfyUI    | v0.11.0 | v0.17.2       | 2026-03-10 | 17 releases behind |
-| sentry-sdk | 2.54.0  | 2.54.0        | 2026-03-08 | current          |
+| Package     | Pinned  | Latest Stable | Released   | Gap                |
+|-------------|---------|---------------|------------|--------------------|
+| <upstream>  | v0.11.0 | v0.17.2       | <date>     | 17 releases behind |
+| <sdk>       | 2.54.0  | 2.54.0        | <date>     | current            |
 ```
 
 ### 4. Flag and advise

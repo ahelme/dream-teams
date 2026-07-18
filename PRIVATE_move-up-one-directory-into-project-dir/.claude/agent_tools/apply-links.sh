@@ -30,6 +30,8 @@
 # team-links.json is written from the template so the toggles are discoverable.
 #
 # Paths come from file-paths-registry.sh (same dir).
+# ADAPT: nothing project-specific lives in this script — edit
+# file-paths-registry.sh for your project's paths.
 
 set -euo pipefail
 
@@ -54,7 +56,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 CLONE="$(cd "$CLONE" && pwd)" || die "clone dir not found"
-[[ -d "$CLONE/.claude" ]] || die "no .claude/ in $CLONE — is this a comfyume-v1 clone?"
+[[ -d "$CLONE/.claude" ]] || die "no .claude/ in $CLONE — is this a project team clone?"
 [[ -d "$TEAMS_REPO" ]]    || die "TEAMS_REPO not found: $TEAMS_REPO (check registry)"
 CONFIG="${CONFIG:-$CLONE/.claude/team-links.json}"
 

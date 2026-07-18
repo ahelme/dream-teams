@@ -1,6 +1,6 @@
 ---
-name: ts
-description: Telegraphic style — rewrite text to omit needless words. Use when user says "make it terse", "telegraphic", "omit needless words", "tighten this up", "/ts", or asks to shorten/compress prose without losing meaning.
+name: terse-style
+description: Telegraphic style — rewrite text to omit needless words. Use when user says "make it terse", "telegraphic", "omit needless words", "tighten this up", "/terse-style", or asks to shorten/compress prose without losing meaning.
 user-invocable: true
 version: 1.1.0
 ---

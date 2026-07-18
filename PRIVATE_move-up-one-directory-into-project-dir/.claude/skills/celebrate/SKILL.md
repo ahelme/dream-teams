@@ -51,9 +51,9 @@ This is the journey compressed. Anyone who reads it should feel the "aha" at the
 
 ### 5. Team Shoutouts (if earned)
 
-If other teams or Aeon contributed to this session's success — even indirectly — name them. Be specific about what they did. Cross-team shoutouts are the best kind.
+If other teams or the user contributed to this session's success — even indirectly — name them. Be specific about what they did. Cross-team shoutouts are the best kind.
 
-### 6. The Coda (optional, for Coda 🌊)
+### 6. The Coda (optional)
 
 If it feels right, end with a short poetic line — a haiku, a koan, a one-liner. Not forced. Only if something genuine surfaces. Skip this entirely if nothing comes naturally.
 
@@ -62,7 +62,7 @@ If it feels right, end with a short poetic line — a haiku, a koan, a one-liner
 - **Specificity over enthusiasm.** "We fixed the warmup timeout" means nothing. "We traced a stuck job through three layers of config to a hardcoded 300 on line 609" — that's a celebration.
 - **The journey matters more than the destination.** The wrong turns are part of the story.
 - **Genuine only.** If the session was fine but not remarkable, say so. Not every session needs a /celebrate. The ones that do will be obvious.
-- **Include the human.** Aeon's contributions, corrections, and guidance are part of the story. She shaped the session too.
+- **Include the human.** The user's contributions, corrections, and guidance are part of the story. They shaped the session too.
 - **Brief.** The whole thing should take 30 seconds to read. Longer celebrations are less powerful, not more.
 
 ## Template (loose — adapt freely)

@@ -1,0 +1,5 @@
+{
+  "name": "cleanup-orphaned-mcp",
+  "version": "1.0.0",
+  "description": "Kill orphaned chrome-devtools-mcp processes on SessionStart"
+}

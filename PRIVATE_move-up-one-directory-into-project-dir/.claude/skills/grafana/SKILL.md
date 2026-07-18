@@ -1,60 +1,64 @@
 ---
-name: verda-grafana
-description: Grafana dashboard management on Verda.
+name: grafana
+description: Grafana dashboard management — health, data sources, dashboards, admin, via the HTTP API.
 user-invocable: true
-version: 1.1.0
+version: 1.0.0
 ---
 
-Grafana dashboard management on Verda.
+Grafana dashboard management on the monitoring host.
 
-**First:** Read `VERDA_PUBLIC_IP` from `.env` in the project root. Use it as `$VERDA_IP` below.
+[ MONITORING STACK DETAILS HERE — Grafana URL, host/SSH access, port,
+auth (GRAFANA_USER/GRAFANA_PASS source), dashboards in use ]
 
-**Server:** root@$VERDA_IP
-**Port:** 3001
+**Server:** [ SSH COMMAND / HOST — or run locally ]
+**Port:** [ GRAFANA PORT, e.g. 3000 ]
 **Config:** `/etc/grafana/grafana.ini`
 **Service:** `systemctl {start|stop|restart|status} grafana-server`
-**Default creds:** admin/admin (change on first login)
-**Access:** `http://$VERDA_IP:3001` or `http://100.89.38.43:3001` (Tailscale)
-**Future:** `https://grafana.aiworkshop.art` (once SSL configured)
+**Access:** [ GRAFANA URL ]
+
+Commands below assume Grafana on `localhost:3000` on the monitoring host —
+adjust port/host, and prefix with `ssh [ SSH HOST ]` if remote.
 
 ## Common Operations
 
 ```bash
 # Check health
-ssh root@$VERDA_IP "curl -s localhost:3001/api/health"
+curl -s localhost:3000/api/health
 
 # List data sources
-ssh root@$VERDA_IP "curl -s http://$GRAFANA_USER:$GRAFANA_PASS@localhost:3001/api/datasources | python3 -m json.tool"
+curl -s http://$GRAFANA_USER:$GRAFANA_PASS@localhost:3000/api/datasources | python3 -m json.tool
 
 # List dashboards
-ssh root@$VERDA_IP "curl -s http://$GRAFANA_USER:$GRAFANA_PASS@localhost:3001/api/search | python3 -m json.tool"
+curl -s http://$GRAFANA_USER:$GRAFANA_PASS@localhost:3000/api/search | python3 -m json.tool
 
 # Add Prometheus data source
-ssh root@$VERDA_IP "curl -s -X POST -H 'Content-Type: application/json' -d '{\"name\":\"Prometheus\",\"type\":\"prometheus\",\"url\":\"http://localhost:9090\",\"access\":\"proxy\",\"isDefault\":true}' http://$GRAFANA_USER:$GRAFANA_PASS@localhost:3001/api/datasources"
+curl -s -X POST -H 'Content-Type: application/json' -d '{"name":"Prometheus","type":"prometheus","url":"http://localhost:9090","access":"proxy","isDefault":true}' http://$GRAFANA_USER:$GRAFANA_PASS@localhost:3000/api/datasources
 
 # Add Loki data source
-ssh root@$VERDA_IP "curl -s -X POST -H 'Content-Type: application/json' -d '{\"name\":\"Loki\",\"type\":\"loki\",\"url\":\"http://localhost:3100\",\"access\":\"proxy\"}' http://$GRAFANA_USER:$GRAFANA_PASS@localhost:3001/api/datasources"
+curl -s -X POST -H 'Content-Type: application/json' -d '{"name":"Loki","type":"loki","url":"http://localhost:3100","access":"proxy"}' http://$GRAFANA_USER:$GRAFANA_PASS@localhost:3000/api/datasources
 ```
 
-## Installed Dashboards
+## Useful community dashboards (grafana.com IDs)
 
 | Dashboard | ID | Purpose |
 |-----------|-----|---------|
 | Docker Container Dashboard | 15331 | Container overview, CPU, memory, network |
 | Container Resources | 14678 | Detailed resource usage per container |
-| NVIDIA DCGM Exporter | 12239 | GPU metrics (when GPU instances run) |
+| NVIDIA DCGM Exporter | 12239 | GPU metrics (if GPU hosts run) |
+
+[ ADAPT: replace/extend with the dashboards actually installed ]
 
 ## Import Dashboard via API
 
 ```bash
 # Download dashboard JSON from grafana.com then import
-ssh root@$VERDA_IP "curl -s https://grafana.com/api/dashboards/15331/revisions/latest/download | curl -s -X POST -H 'Content-Type: application/json' -d @- http://$GRAFANA_USER:$GRAFANA_PASS@localhost:3001/api/dashboards/import"
+curl -s https://grafana.com/api/dashboards/15331/revisions/latest/download | curl -s -X POST -H 'Content-Type: application/json' -d @- http://$GRAFANA_USER:$GRAFANA_PASS@localhost:3000/api/dashboards/import
 ```
 
 ## Change Admin Password
 
 ```bash
-ssh root@$VERDA_IP "curl -s -X PUT -H 'Content-Type: application/json' -d '{\"oldPassword\":\"admin\",\"newPassword\":\"NEW_PASSWORD\"}' http://$GRAFANA_USER:$GRAFANA_PASS@localhost:3001/api/user/password"
+curl -s -X PUT -H 'Content-Type: application/json' -d '{"oldPassword":"OLD_PASSWORD","newPassword":"NEW_PASSWORD"}' http://$GRAFANA_USER:$GRAFANA_PASS@localhost:3000/api/user/password
 ```
 
 If $ARGUMENTS provided, treat as a Grafana operation or question.

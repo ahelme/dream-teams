@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 #
-# new-team.sh — stand up a fully-wired comfyume-v1 clone for a new team on Mello.
+# new-team.sh — stand up a fully-wired project clone for a new team.
 # VERSION: 1.1.0
 #
-# Moved 2026-07-06 from the ops repo (comfymulti-scripts/scripts/) into
-# TEAMS_REPO/.claude/agent_tools/ so it rides along with every clone as a
-# shared agent tool. Delegates symlink wiring to apply-links.sh (same dir).
+# Lives in TEAMS_REPO/.claude/agent_tools/ so it rides along with every clone
+# as a shared agent tool. Delegates symlink wiring to apply-links.sh (same dir).
+# ADAPT: all project-specific paths/names come from file-paths-registry.sh —
+# edit that file, not this script.
 #
 # Replaces the fragile "copy a template dir" approach (cp -r dereferences the
 # .claude symlinks, carries stale code, and copies the wrong team's identity).
@@ -17,14 +18,14 @@
 #   new-team.sh <slug> "<emoji>" "<name>" [options]
 #
 # Args:
-#   slug     team dir + identity slug, e.g. spl-team
-#   emoji    teams-chat emoji, e.g. 🦊  (any single grapheme)
-#   name     teams-chat display name, e.g. Fable
+#   slug     team dir + identity slug, e.g. refactoring-team
+#   emoji    teams-chat emoji, e.g. 🌿  (any single grapheme)
+#   name     teams-chat display name, e.g. Willow
 #
 # Options:
-#   --base <branch>     base branch to fork from        (default: all-teams-testing)
+#   --base <branch>     base branch to fork from        (default: $DEFAULT_BASE_BRANCH from registry)
 #   --branch <name>     new team branch name            (default: <slug>-YYYY-MM-DD)
-#   --dir <path>        clone target dir                (default: $TEAM_CLONES_DIR/<slug>/comfyume-v1)
+#   --dir <path>        clone target dir                (default: $TEAM_CLONES_DIR/<slug>/$PROJECT_DIRNAME)
 #   --no-push           create the branch locally but don't push it
 #   -h | --help         show this help
 #
@@ -43,7 +44,7 @@ ok()   { printf '\033[32m✓ %s\033[0m\n' "$*"; }
 # --- parse args ---
 [[ $# -lt 3 ]] && { grep '^#' "$0" | sed 's/^# \{0,1\}//'; exit 1; }
 SLUG="$1"; EMOJI="$2"; NAME="$3"; shift 3
-BASE="all-teams-testing"; BRANCH=""; TARGET=""; PUSH=1
+BASE="${DEFAULT_BASE_BRANCH:-main}"; BRANCH=""; TARGET=""; PUSH=1
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --base)   BASE="$2"; shift 2 ;;
@@ -57,7 +58,7 @@ done
 
 TODAY="$(date +%F)"
 [[ -z "$BRANCH" ]] && BRANCH="${SLUG}-${TODAY}"
-[[ -z "$TARGET" ]] && TARGET="${TEAM_CLONES_DIR}/${SLUG}/comfyume-v1"
+[[ -z "$TARGET" ]] && TARGET="${TEAM_CLONES_DIR}/${SLUG}/${PROJECT_DIRNAME:-project}"
 
 # --- preflight ---
 [[ -d "$TEAMS_REPO" ]]     || die "TEAMS_REPO not found: $TEAMS_REPO (check registry)"

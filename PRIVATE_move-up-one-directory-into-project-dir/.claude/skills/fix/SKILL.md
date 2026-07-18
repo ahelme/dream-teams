@@ -55,7 +55,7 @@ Make the change. Keep it minimal.
 
 - Confirm the fix: check the specific observable outcome from step 4
 - Run `/health-check` if appropriate
-- Check Sentry for new errors
+- Check your error tracker (e.g. Sentry) for new errors
 - Check the area around the fix — any side effects?
 
 ### 7. Document

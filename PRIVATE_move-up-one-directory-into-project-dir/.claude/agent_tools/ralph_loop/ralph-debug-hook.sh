@@ -1,6 +1,13 @@
 #!/bin/bash
 # Debug wrapper for Ralph Loop stop hook
 # Logs everything to .claude/ralph-hook-debug.log
+#
+# Generic tool — no project-specific paths. Pairs with a "Ralph loop" skill/
+# workflow that writes .claude/ralph-loop.local.md (frontmatter: iteration,
+# max_iterations, completion_promise; body = the prompt re-fed each iteration).
+# Wire it as a Stop hook in settings.json when debugging loop behaviour.
+# ADAPT: nothing required beyond wiring the hook; remove if you don't run
+# Ralph loops.
 
 LOG=".claude/ralph-hook-debug.log"
 echo "=== HOOK FIRED $(date -u) ===" >> "$LOG"

@@ -48,18 +48,17 @@ Use what's relevant — don't force all tools on every issue:
 | Tool | What it tells you | When to use |
 |------|-------------------|-------------|
 | `graphify query "<q>"` | Scoped subgraph — related functions, callers, config edges | **Orient first** when `graphify-out/graph.json` exists — more thorough than grep (grep finds only your search string; the graph surfaces the call/config edges around it, catching orphans + drifted comments). Also `explain`/`path`. Rebuild stale with `graphify update .` |
-| `/health-check` | Endpoint status + Sentry errors | First thing — is it up? |
-| Sentry MCP | Errors, traces, stack traces, frequency | Something is erroring |
+| `/health-check` | Endpoint status + error-tracker errors | First thing — is it up? |
+| Error tracker (e.g. Sentry MCP) | Errors, traces, stack traces, frequency | Something is erroring |
 | Chrome DevTools MCP | Screenshots, console, network, DOM | Frontend/UI issue |
-| `/config-audit` | Cross-server config comparison | "Works on testing, not prod" |
-| `/verda-logs` | Serverless container logs | Worker/GPU issues |
-| `/verda-status` | All Verda services health | Infrastructure layer |
-| SSH (`/verda-ssh`) | Direct server access | Need to check something live |
+| [ ADAPT: cross-environment config comparison tool/skill ] | Config drift between environments | "Works on testing, not prod" |
+| [ ADAPT: infra log/status skills for your hosts ] | Service logs and health per host | Infrastructure layer |
+| SSH to [ TESTING HOST ] / prod host | Direct server access | Need to check something live |
 | `git log --oneline -20` | What changed recently? | "It was working yesterday" |
 | `git blame <file>` | Who changed what, when | Suspicious file |
 | `docker logs <container>` | Container-level output | Service won't start |
-| Redis CLI | Queue state, settings, stuck jobs | Queue/routing issues |
-| `.env` vs admin panel | Config source of truth | Settings mismatch |
+| Queue/cache CLI (e.g. redis-cli) | Queue state, settings, stuck jobs | Queue/routing issues |
+| `.env` vs runtime config | Config source of truth | Settings mismatch |
 
 ## Output
 
@@ -109,17 +108,16 @@ Use when the obvious answer is wrong. When the symptom points one way but the fi
 1. **Map the flow** — draw a mermaid diagram of the actual path the request/data/job takes through the system
    ```mermaid
    graph LR
-     A[User Browser] --> B[nginx]
-     B --> C[Admin Flask]
-     C --> D[Redis Queue]
-     D --> E[Queue Manager]
-     E --> F[Worker]
-     F --> G[Verda GPU]
-     G --> F
+     A[User Browser] --> B[Reverse Proxy]
+     B --> C[App Server]
+     C --> D[Queue]
+     D --> E[Worker]
+     E --> F[Backend Service]
      F --> E
-     E --> H[WebSocket]
-     H --> A
+     E --> C
+     C --> A
    ```
+   [ ADAPT: replace with your system's actual request/data path ]
 2. **Mark the symptom** — where in the chain does the problem appear?
 3. **Walk backwards** — from symptom node, check each upstream node:
    - Is the input to this node correct?
