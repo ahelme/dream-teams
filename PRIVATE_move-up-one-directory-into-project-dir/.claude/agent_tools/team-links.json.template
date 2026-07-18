@@ -1,0 +1,12 @@
+{
+  "_comment": "Per-clone Teams-system toggles. apply-links.sh reads this. true=wire, false=remove. See agent_tools/README.md. This file is local per clone (gitignored under .claude/*).",
+  "claudeMdAdditionalDir": true,
+  "linkAll": true,
+  "links": {
+    "agent_docs": true,
+    "skills": true,
+    "hooks": true,
+    "agent_tools": true
+  },
+  "identity": ""
+}

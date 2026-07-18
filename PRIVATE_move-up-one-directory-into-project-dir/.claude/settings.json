@@ -1,0 +1,54 @@
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "SPEAK_URL": "https://speak.aeonlab.one/api/tts/claude-speaks"
+  },
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:docs.verda.com)",
+      "WebFetch(domain:api.datacrunch.io)",
+      "WebFetch(domain:datacrunch-python.readthedocs.io)",
+      "WebFetch(domain:api.verda.com)",
+      "WebFetch(domain:github.com)",
+      "Edit(//home/dev/projects/claude-code-comfyume-teams/**)",
+      "Write(//home/dev/projects/claude-code-comfyume-teams/**)",
+      "Edit(//home/dev/projects/comfymulti-scripts/**)",
+      "Write(//home/dev/projects/comfymulti-scripts/**)"
+    ],
+    "defaultMode": "bypassPermissions",
+    "additionalDirectories": [
+      "/home/dev/projects/claude-code-comfyume-teams",
+      "/home/dev/projects/comfymulti-scripts"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/dev/.claude/team-detect.sh resume",
+            "statusMessage": "Detecting team & loading context..."
+          },
+          {
+            "type": "command",
+            "command": "/home/dev/.claude/cleanup-orphaned-mcp.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Read|Glob|Grep",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/graphify-nudge.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {}
+}
