@@ -10,7 +10,7 @@
 # --- Repos on the dev server ---
 # Teams repo: shared Claude config (CLAUDE.md, skills, hooks, agent_docs,
 # agent_tools) symlinked into every clone. This registry lives inside it.
-TEAMS_REPO="/path/to/projectname_project/teams-repo"
+TEAMS_REPO="/path/to/projectname_project/PRIVATE"  # the shared .claude home (PRIVATE dir, or a dedicated teams repo)
 # Ops repo (.env, deploy/backup scripts) — optional, reference only.
 OPS_REPO="/path/to/projectname_project/ops-repo"
 # Main project repo — clone source for new team clones.

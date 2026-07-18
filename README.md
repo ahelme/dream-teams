@@ -124,12 +124,16 @@ Steps:
    `cp -a teams-template/PRIVATE_move-up-one-directory-into-project-dir <projectname>_project/PRIVATE`
 4. Clone the project codebase once per agent (or team), each in its own dir.
 
-> Depth note: if your clones sit at `<projectname>_project/<agent>/<clone>/`,
-> relative symlinks to PRIVATE need `../../PRIVATE/...`; if clones sit directly
-> at `<projectname>_project/<clone-agent>/`, use `../PRIVATE/...`. The
-> `all-teams-session-log.md` symlink in this repo's root shows the shallow
-> form. `agent_tools/file-paths-registry.sh` is the single place absolute
-> paths live — set it first.
+> Depth notes (learned by dogfooding):
+> - Links created *inside* `.claude/` need one MORE `..` than links in the
+>   clone root: for `<projectname>_project/<agent>/<clone>/`, the clone-root
+>   session-log symlink is `../../PRIVATE/...` but `.claude/agent_docs` is
+>   `../../../PRIVATE/...`. Absolute paths (what `apply-links.sh` uses via
+>   `file-paths-registry.sh`) avoid the whole question — set the registry first.
+> - COMMITTING the `.claude/*` symlinks (ComfyuMe style) only works when every
+>   clone sits at the same depth. If depths differ (e.g. a dev clone at a
+>   different level), instead gitignore the wiring (`.claude/` +
+>   `all-teams-session-log.md`) and wire each clone locally.
 
 ## 2. Per-clone files
 
