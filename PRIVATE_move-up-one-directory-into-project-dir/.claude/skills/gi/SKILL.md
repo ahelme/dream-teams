@@ -18,6 +18,10 @@ version: 1.1.0
 3. **Read team identity** from `.claude/teams-chat.local.md` (emoji, name, team)
 4. **Create the issue and add to project:**
 
+[ ADAPT: the commands in steps 4–5 assume a **user-owned** project board
+(`--owner "@me"`, `user(login:)`); for org-owned repos use `--owner <org>` and
+`organization(login:)` — and adjust the `--jq` path accordingly ]
+
 ```bash
 url=$(gh issue create --repo [ OWNER/REPO ] \
   --title "<title>" \

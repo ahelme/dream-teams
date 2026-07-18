@@ -9,8 +9,9 @@ Talks to Slack via this agent's own Slack app. Identity + secrets come from
 this agent's identity file — never embed tokens in this skill.
 
 [ SLACK TRANSPORT DETAILS HERE — e.g. helper scripts in
-[ PATH/TO/CHAT HELPERS ], identity file selected via an env var such as
-AGENT_IDENTITY_FILE ]
+[ PATH/TO/CHAT HELPERS ]. Identity comes from the agent's
+`.claude/teams-chat.local.md`, which links/copies to
+`PRIVATE/.claude/teams-chat/<agent-name>.md` ]
 
 Shell-quoting gotcha: backticks and literal `<...>` in the message argument
 break the send (and a literal `<!channel>` pings everyone) — single-quote the

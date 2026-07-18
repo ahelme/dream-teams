@@ -103,7 +103,7 @@ target environment(s):
 | Check         | Testing ([ TESTING URL ]) | Prod ([ PRODUCTION URL ]) |
 |---------------|---------------------------|---------------------------|
 | Endpoint      | 200                       | 200                       |
-| Containers    | 8/8 healthy               | 23/23 healthy             |
+| Containers    | [ N ]/[ N ] healthy       | [ N ]/[ N ] healthy       |
 | Cache/queue   | PONG                      | PONG                      |
 | Disk          | / 45% · data 38%          | ...                       |
 | Backup-cron   | ok                        | ok                        |

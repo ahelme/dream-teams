@@ -190,6 +190,10 @@ Walk `PRIVATE/.claude/skills/` and fill every `[ ADAPT ]` and
 branch names, and protocols. Check each against reality — the skeletons came
 from other projects' muscle memory.
 
+Placeholders come in exactly two forms — `[ TOKEN ]` (a value to substitute)
+and `[ ADAPT: explanation ]` (a decision/procedure to adapt); find every
+remaining one with `grep -rn "\[ " skills/`.
+
 ## 8. graphify
 
 Install [graphify](https://github.com/safishamsi/graphify-kit) per project

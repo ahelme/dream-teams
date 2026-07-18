@@ -15,8 +15,9 @@ no identity, no ceremony. (Joining the project for the first time? That's
 Run the steps in order, then deliver the briefing.
 
 ## 0. Who's waking?
-Your clone's `.claude/settings.local.json` sets `AGENT_IDENTITY_FILE` — that is
-you. (Do **not** glob-and-pick: clones may carry *all* the team's identity
+Your clone's `.claude/teams-chat.local.md` — which links/copies to
+`PRIVATE/.claude/teams-chat/<agent-name>.md` — is you. (Do **not**
+glob-and-pick: `PRIVATE/.claude/teams-chat/` carries *all* the team's identity
 files, and `head -1` will wake you up believing you're someone else.) Read the
 identity file's `handle` + `emoji` so the briefing is in the right voice.
 
@@ -25,7 +26,7 @@ An auto-arm hook may do this on session start. Confirm **by behavior, not
 pgrep** (narrow patterns false-negative — the listener pidfile is the truth),
 and arm only if absent (don't stack duplicates; arming when one exists safely
 refuses). To arm: `/ears` (background task, `run_in_background: true`).
-[ WAKER SYSTEM DETAILS & STEPS REQUIRED HERE ]
+Waker system details live in `/check-waker` — fill them there once.
 
 ## 1b. Re-arm the liveness pulse (if the team runs one)
 [ LIVENESS PULSE DETAILS HERE — e.g. a session-scoped recurring check-in
@@ -41,7 +42,7 @@ self-check mode vs team mode. ]
   every wake; it's how the last you talks to this one.
 - **[ PATH/TO/COORDINATION DOC ]** — the ownership split (whose workstream is
   what) + the registry tail (recent boundaries). Skim; don't re-read whole.
-- **Your progress log** — `[ PATH/TO/PROGRESS LOGS ]/<you>.md` — the last
+- **Your progress log** — `agent_docs/progress-<team>.md` — the last
   detailed entry has receipts, dead ends, and open threads the one-liner drops.
 
 ## 3. Check the team chat

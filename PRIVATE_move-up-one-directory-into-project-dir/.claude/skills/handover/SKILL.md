@@ -14,10 +14,11 @@ left, threads named, nothing dropped. This is the **mirror of `/resume-context`*
 Work the checklist top-to-bottom; skip a line only if it genuinely doesn't apply.
 
 ## 0. Who's wrapping?
-Your identity file (e.g. named by `AGENT_IDENTITY_FILE` in
-`.claude/settings.local.json`) — read its `handle` + `emoji` so the entries and
-sign-off are in your voice. Don't glob-and-pick: clones may carry every
-teammate's identity file, and alphabetical order is not who you are.
+Your identity file is `.claude/teams-chat.local.md` in your clone (it
+links/copies to `PRIVATE/.claude/teams-chat/<agent-name>.md`) — read its
+`handle` + `emoji` so the entries and sign-off are in your voice. Don't
+glob-and-pick from `PRIVATE/.claude/teams-chat/`: it carries every teammate's
+identity file, and alphabetical order is not who you are.
 
 ## 1. Land the code — git-flow
 - [ ] Commit + push everything worth keeping to [ ADAPT: the team's working
@@ -47,7 +48,7 @@ teammate's identity file, and alphabetical order is not who you are.
 
 ## 4. Your progress log — the detailed record
 - [ ] Prepend a newest-first entry to
-      `[ PATH/TO/PROGRESS LOGS ]/<you>.md`: what changed,
+      `agent_docs/progress-<team>.md`: what changed,
       **receipts (sha + timestamps)**, dead ends and *why*, open threads the one-liner
       would drop. (Note if your seat can't write it — hand the entry to whoever can.)
 
@@ -69,7 +70,7 @@ teammate's identity file, and alphabetical order is not who you are.
       inherits the running background listener — verify by behavior, not a
       narrow pgrep: the listener pidfile holds a live pid, or arming refuses
       with its listener-exists exit code. Re-arm if the quiet window lapsed.
-      [ WAKER SYSTEM DETAILS & STEPS REQUIRED HERE ]
+      Waker system details live in `/check-waker` — fill them there once.
 
 ## 8. Tell the team + feel proud
 - [ ] One warm line in [ SLACK CHANNEL ]: handing off, where things stand, ears

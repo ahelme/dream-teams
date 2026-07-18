@@ -27,7 +27,7 @@ gh pr checks <PR#> --repo [ OWNER/REPO ]
 gh api repos/[ OWNER/REPO ]/pulls/<PR#>/comments --jq '.[] | {user: .user.login, body: .body[:200], path: .path, line: .line, state: .state}'
 
 # PR issue-style comments
-gh api repos/[ OWNER/REPO ]/issues/<PR#>/comments --jq '.[] | {user: .author.login, body: .body[:200]}'
+gh api repos/[ OWNER/REPO ]/issues/<PR#>/comments --jq '.[] | {user: .user.login, body: .body[:200]}'
 ```
 
 ## Step 2 — Categorise each finding

@@ -64,7 +64,7 @@ interview first.
 ## Consulting ADRs (do this before touching a governed area)
 
 Before you build in a governed area:
-1. **Read `docs/decisions/README.md` in full** — it defines the naming,
+1. **Read `agent_docs/ADR/README.md` in full** — it defines the naming,
    categories, and status this store uses.
 2. Scan titles + statuses; focus on **`accepted`** ones (active law).
 3. Read the relevant ones fully — Context, Decision, Consequences, and the
@@ -77,7 +77,7 @@ Before you build in a governed area:
 
 ## Writing one (the flow)
 
-**Phase 0 — scan.** Read `docs/decisions/README.md`, list existing ADRs, note
+**Phase 0 — scan.** Read `agent_docs/ADR/README.md`, list existing ADRs, note
 any this interacts with or supersedes. Check the affected code so the
 Implementation notes name real files.
 
@@ -85,14 +85,14 @@ Implementation notes name real files.
 at a time; stop when you can fill every section without guessing. Confirm the
 intent summary before drafting.
 
-**Phase 2 — draft.** Copy `templates/adr-fast.md` into `docs/decisions/` as
+**Phase 2 — draft.** Copy `templates/adr-fast.md` into `agent_docs/ADR/` as
 `YYYY-MM-DD-<category>-<slug>.md`. Fill every section (delete optional ones you
 don't need — don't leave placeholders). Set `category:`, `status:`, `date:`,
 `deciders:`. Write **Verification** as checkboxes an agent could actually run.
 Write the **Revisit-when** line — the condition that should make a future
 session reopen this (we're fast-moving; name the trip-wire).
 
-**Phase 3 — land it.** Add the ADR to the index in `docs/decisions/README.md`
+**Phase 3 — land it.** Add the ADR to the index in `agent_docs/ADR/README.md`
 (under its category). Then wire it into the continuity system:
 - **Issue tracker** — link the ADR from the relevant [ ORG/REPO ] issue (or file
   one); a decision the issue doesn't reflect is a receipt nobody finds.
@@ -116,13 +116,13 @@ Deprecate (no replacement, just "don't do this anymore") the same way with
 `status: deprecated` + a one-line why.
 
 ## No secrets in ADRs
-Assume `docs/decisions/` ships in a public repo: **no tokens, IDs, IPs, or
+Assume `agent_docs/ADR/` ships in a public repo: **no tokens, IDs, IPs, or
 credentials** — those live only in [ PATH/TO/PRIVATE DIR ] and gitignored local
 files. Reference an ops decision by shape ("relay in region X, credentials in
 gitignored config"), never by secret.
 
 ## Resources
 - `templates/adr-fast.md` — the one lean template (both lanes use it).
-- `docs/decisions/README.md` — the store's index + conventions (source of truth
+- `agent_docs/ADR/README.md` — the store's index + conventions (source of truth
   for naming/categories/status). [ ADAPT: create it if the project has no ADR
   store yet. ]

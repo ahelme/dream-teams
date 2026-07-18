@@ -5,7 +5,7 @@ user-invocable: true
 version: 1.1.0
 ---
 
-Commit all staged+unstaged changes, push, and create a PR to [ INTEGRATION BRANCH ]. **Testing PRs skip code review** for fast iteration — automated scanners (e.g. Semgrep, ruff) still run via GH Actions. Do NOT merge.
+Commit all staged+unstaged changes, push, and create a PR to [ INTEGRATION BRANCH ]. **Testing PRs skip code review** for fast iteration — [ ADAPT: list the scanners your repo actually runs in CI, if any ]. Do NOT merge.
 
 1. `git add` changed files (specific files, not -A)
 2. `git commit` with conventional commit message

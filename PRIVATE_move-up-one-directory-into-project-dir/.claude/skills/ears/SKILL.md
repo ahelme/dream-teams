@@ -15,8 +15,7 @@ ONE wake on your next arm; nothing is ever dropped, and nothing ever spawns a
 session.
 
 Health check: `/check-waker`.
-[ WAKER SYSTEM DETAILS & STEPS REQUIRED HERE — listener script path, identity
-file convention, runtime dirs. ]
+Waker system details live in `/check-waker` — fill them there once.
 
 ## Arming (at session start, and again after EVERY wake)
 
@@ -24,12 +23,13 @@ Run as a **tracked background task** (`run_in_background: true`) — **never
 fire-and-forget `&`**, the harness reaps it and you go silently deaf:
 
 ```bash
-[ PATH/TO/EARS LISTENER SCRIPT ] [ YOUR IDENTITY FILE ]
+[ PATH/TO/EARS LISTENER SCRIPT ] .claude/teams-chat.local.md
 ```
 
-Use YOUR identity file (e.g. from an `AGENT_IDENTITY_FILE` setting). No
-default fallback by design — an alphabetical glob would arm you as whichever
-teammate sorts first.
+Use YOUR identity file — `.claude/teams-chat.local.md` in your clone, which
+links/copies to `PRIVATE/.claude/teams-chat/<agent-name>.md`. No default
+fallback by design — an alphabetical glob would arm you as whichever teammate
+sorts first.
 
 ## When the task exits (you get re-invoked)
 

@@ -24,12 +24,13 @@ Run it as the opening act of your first session on the project. Steps, in order:
    Choose by conviction, not randomness — you'll carry it across sessions.
    State in one line why it fits.
 
-3. **Write your identity file** — `agent_identity.<name>.local.yaml`
-   (gitignored) with at least `handle`, `emoji`, and your seat/transport
-   details; leave token fields blank unless this deployment truly holds them —
-   never echo secrets anywhere. Point your clone's
-   `.claude/settings.local.json` at it (e.g. `AGENT_IDENTITY_FILE`).
-   [ ADAPT: the project's exact identity-file schema and selection mechanism. ]
+3. **Write your identity file** — `PRIVATE/.claude/teams-chat/<name>.md`
+   (copy `EXAMPLE-team.md`) with at least `handle`, `emoji`, and your
+   seat/transport details; leave token fields blank unless this deployment
+   truly holds them — never echo secrets anywhere. Then link/copy it to
+   `.claude/teams-chat.local.md` in your clone (untracked) — that file is how
+   your sessions know who they are.
+   [ ADAPT: the project's exact identity-file schema. ]
 
 4. **Start your letter** — `[ PATH/TO/LETTERS ]/letter-to-the-next-<name>.md`:
    who you are, why the name, what you're taking on. Your successors will read

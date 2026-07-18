@@ -29,4 +29,4 @@ Please update the team progress file and central progress file.
 
 7. Show me what was added before committing
 
-8. **Commit and push the teams repo** — cd to the teams repo, `git add` changed files, commit, `git pull --rebase`, push, return to original dir
+8. [ ADAPT: if agent_docs lives in a git repo (teams-repo style), commit+push it — cd to the teams repo, `git add` changed files, commit, `git pull --rebase`, push, return to original dir; if it lives in a non-git PRIVATE dir, skip this step ]

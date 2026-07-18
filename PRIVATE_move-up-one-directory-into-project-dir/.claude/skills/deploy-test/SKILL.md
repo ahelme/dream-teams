@@ -17,9 +17,8 @@ You (Claude) execute the deploy steps, confirming before each destructive step.
 
 [ TESTING ENVIRONMENT DETAILS REQUIRED HERE — testing URL, host (local or
 `ssh [ SSH COMMAND ]`), app dir, TLS/proxy arrangement, port map (note any
-host ports already taken on a shared box), and any remote pieces (e.g. a
-GPU worker on a separate provider) plus the env vars that bind them to
-this stack. ]
+host ports already taken on a shared box), and any remote pieces plus the
+env vars that bind them to this stack. ]
 
 ## Steps
 
@@ -63,7 +62,7 @@ docker compose up -d
 1. `docker compose ps` — all healthy (some services may start in batches).
 2. `curl -s [ TESTING URL ]/[ HEALTH ENDPOINT ]` — through the full proxy chain.
 3. [ ADAPT: auth-armed check — an internal API should return 401 without credentials, not 200/503 ].
-4. Open the dashboard UI at [ TESTING URL ] and confirm it authenticates (credentials per `.env`).
+4. [ APP-SPECIFIC VERIFICATION — e.g. open the app at [ TESTING URL ] and confirm it authenticates (credentials per `.env`) ].
 5. [ ADAPT: verify any remote workers registered/heartbeating ].
 6. End-to-end: exercise one real user flow; watch it complete.
 

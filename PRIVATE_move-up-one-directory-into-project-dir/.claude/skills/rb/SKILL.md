@@ -7,7 +7,7 @@ version: 1.1.0
 
 # Rotate Branch
 
-Team branches follow [ TEAM BRANCH PATTERN ]: `[base-branch]-[team-short]-YYYY-MM-DD` (e.g. `testing-<team>-2026-01-05` off [ INTEGRATION BRANCH ], `main-<team>-2026-01-05` off [ MAIN BRANCH ] for prod patches). Date suffix must match today's date in [ TIMEZONE ].
+Team branches follow [ TEAM BRANCH PATTERN — a prefix plus a date suffix, e.g. `<base-branch>-<team-short>-YYYY-MM-DD`: `testing-<team>-2026-01-05` off [ INTEGRATION BRANCH ], `main-<team>-2026-01-05` off [ MAIN BRANCH ] for prod patches ]. Date suffix must match today's date in [ TIMEZONE ].
 
 **Team shorts:** [ ADAPT: list your team short codes and their meanings ]
 
@@ -17,7 +17,7 @@ Team branches follow [ TEAM BRANCH PATTERN ]: `[base-branch]-[team-short]-YYYY-M
 2. Get branch: `git branch --show-current` — extract trailing `YYYY-MM-DD`
 3. If dates match → "Branch is current." Stop.
 4. If no `YYYY-MM-DD` suffix → warn, stop.
-5. Compute new name: keep the same `[base]-[short]` prefix, just update the date
+5. Compute new name: keep the prefix from the team branch pattern above, just update the date
 6. Rename + push:
    ```bash
    git branch -m <old> <new>
