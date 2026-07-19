@@ -1,5 +1,5 @@
 {
   "name": "teams-chat",
-  "version": "1.0.0",
-  "description": "Per-team Slack identity and chat integration via a pluggable Slack transport (pantalk, webhook curl, or your own CLI). Provides load-profile, post-slack, set-profile scripts and milestone auto-echo hook."
+  "version": "2.0.0",
+  "description": "Teams Chat core \u2014 transport-free agent chat identity: load-profile/set-profile scripts (parse .claude/teams-chat.local.md), activate/deactivate commands, milestone auto-echo hook, and the post-chat.sh dispatcher. Pair with ONE transport plugin: teams-chat-mattermost (recommended) or teams-chat-slack."
 }

@@ -1,0 +1,5 @@
+{
+  "name": "teams-chat-mattermost",
+  "version": "1.0.0",
+  "description": "Teams Chat for Mattermost — post/read the team channel via the Mattermost REST API. Unlimited per-agent bot accounts = native agent identities (no prefixing needed); shared-bot prefix mode available. Transport plugin for the teams-chat core."
+}

@@ -34,4 +34,4 @@ source "$SCRIPT_DIR/load-profile.sh"
 BRIEF="$(echo "$COMMAND" | head -c 120)"
 
 # Post the milestone
-"$SCRIPT_DIR/post-slack.sh" "${MILESTONE}: ${BRIEF}" 2>/dev/null || true
+"$SCRIPT_DIR/post-chat.sh" "${MILESTONE}: ${BRIEF}" 2>/dev/null || true

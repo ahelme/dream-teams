@@ -1,6 +1,6 @@
-# teams-template
+# Dream Teams
 
-A starter kit for running **multi-agent Claude Code teams** on a shared
+**Dream Teams** is a starter kit for running **multi-agent Claude Code teams** on a shared
 project: skills, identity protocols, shared docs, hooks, and provisioning
 tools — copied from two battle-tested projects (YETI and ComfyuMe) and
 genericized. Everything project-specific is an `[ ADAPT ]` placeholder or a
@@ -10,8 +10,9 @@ zero-config install.
 ## What's in the box
 
 ```
-teams-template/
-├── README.md                  ← you are here
+dream-teams/
+├── README.md
+├── CLAUDE.example.md          ← paste-into-your-CLAUDE.md team operating section                  ← you are here
 ├── all-teams-session-log.md   ← symlink (dangling on purpose — see setup §3)
 ├── plugins/                   ← teams-chat, team-detect, cleanup-orphaned-mcp (+README)
 └── PRIVATE_move-up-one-directory-into-project-dir/
@@ -82,17 +83,21 @@ teams-template/
 | `ground` | Grounding pause for stuck, tense, or heavy moments |
 | `terse-style` | Telegraphic-style rewriter for docs and updates |
 
-## The two Slack identity protocols — choose one per project
+## Team chat — three identity protocols, choose one per project
 
-1. **Per-agent app** (YETI style): every agent has their own Slack app, handle
-   and emoji. Nicest identities; **Slack caps how many apps you can create**.
-   Skills: `check-slack-app-per-agent`, `update-slack-app-per-agent`.
-2. **Shared app** (ComfyuMe style): ONE Slack app for all agents; each message
-   is prefixed with the agent's emoji + name from their untracked identity file
-   (`.claude/teams-chat.local.md`). Needs the `plugins/teams-chat` plugin and a
-   transport (webhook/bot-token built into `agent_tools/bin/team-say`,
-   `team-hear`). When you adopt this, rename
+1. **Mattermost, per-agent bots** (recommended): open source, self-hostable,
+   **no limit on bot accounts** — every agent gets a real account with their
+   own name and avatar. Plugins: `teams-chat` (core) +
+   `teams-chat-mattermost`. Configure `MATTERMOST_URL` / `MATTERMOST_TOKEN`
+   (per agent) / `MATTERMOST_CHANNEL_ID`; `team-say`/`team-hear` auto-detect.
+2. **Slack, shared app** (ComfyuMe style): ONE Slack app for all agents; each
+   message is prefixed with the agent's emoji + name from their untracked
+   identity file (`.claude/teams-chat.local.md`). Plugins: `teams-chat` +
+   `teams-chat-slack`. When you adopt this, rename
    `check-slack-shared-slack-app` → `check-slack`.
+3. **Slack, per-agent apps** (YETI style): every agent their own Slack app,
+   handle and emoji. Nicest Slack identities, but **Slack caps app count**.
+   Skills: `check-slack-app-per-agent`, `update-slack-app-per-agent`.
 
 ---
 
@@ -110,7 +115,7 @@ inside it):
 │       ├── agent_docs/  agent_tools/  hooks/  skills/  teams-chat/
 │       ├── settings.json  settings-json-registry.md  skills-registry.md
 │       └── agent_docs/untracked/all-teams-session-log.md
-├── teams-template/                   ← your clone of THIS repo
+├── dream-teams/                   ← your clone of THIS repo
 ├── <agent-1>/<project-clone>/        ← one codebase clone per agent (or team)
 ├── <agent-2>/<project-clone>/
 └── ...
@@ -118,10 +123,10 @@ inside it):
 
 Steps:
 1. Ensure a parent folder `<projectname>_project/` exists.
-2. Clone this repo into it: `git clone <teams-template-url> <projectname>_project/teams-template`
+2. Clone this repo into it: `git clone <dream-teams-url> <projectname>_project/dream-teams`
 3. Copy `PRIVATE_move-up-one-directory-into-project-dir/` up into the parent
    folder and rename it to just `PRIVATE`:
-   `cp -a teams-template/PRIVATE_move-up-one-directory-into-project-dir <projectname>_project/PRIVATE`
+   `cp -a dream-teams/PRIVATE_move-up-one-directory-into-project-dir <projectname>_project/PRIVATE`
 4. Clone the project codebase once per agent (or team), each in its own dir.
 
 > Depth notes (learned by dogfooding):

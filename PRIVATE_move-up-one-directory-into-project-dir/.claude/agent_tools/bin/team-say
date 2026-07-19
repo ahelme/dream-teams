@@ -25,6 +25,17 @@ else
 fi
 
 # --- TRANSPORT: pick ONE and delete the others -------------------------------
+# 0. Mattermost (recommended — unlimited per-agent bot identities; see
+#    plugins/teams-chat-mattermost). Per-agent bots post natively, so the
+#    prefix is only applied in shared-bot mode by the plugin script itself.
+if [[ -n "${MATTERMOST_URL:-}" ]]; then
+  _MM="${TEAMS_CHAT_MM_SCRIPT:-$HOME/.claude/plugins/marketplaces/[ your-plugins-marketplace ]/teams-chat-mattermost/hooks/scripts/post-mattermost.sh}"
+  # (native bot identity by default; the plugin applies the identity prefix
+  #  itself when MATTERMOST_SHARED_BOT=1)
+  if [[ -f "$_MM" ]]; then exec bash "$_MM" "$MESSAGE"; fi
+  echo "ERROR: MATTERMOST_URL set but plugin script not found at $_MM (set TEAMS_CHAT_MM_SCRIPT)" >&2
+  exit 1
+fi
 # 1. Plain Slack incoming webhook (simplest — works with a free Slack app):
 if [[ -n "${TEAM_CHAT_WEBHOOK_URL:-}" ]]; then
   curl -sS -X POST -H 'Content-type: application/json' \

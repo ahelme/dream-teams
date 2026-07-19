@@ -1,0 +1,5 @@
+{
+  "name": "teams-chat-slack",
+  "version": "1.0.0",
+  "description": "Teams Chat for Slack — post the team channel via incoming webhook, bot token, or a CLI (e.g. pantalk). Identity prefix comes from the teams-chat core's load-profile.sh. Transport plugin for the teams-chat core."
+}

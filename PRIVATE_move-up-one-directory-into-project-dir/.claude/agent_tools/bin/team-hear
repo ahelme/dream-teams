@@ -10,6 +10,13 @@ set -euo pipefail
 LIMIT="${1:-10}"
 CHANNEL="${TEAM_CHAT_CHANNEL_ID:-[ SLACK CHANNEL ID ]}"
 
+# 0. Mattermost (recommended; see plugins/teams-chat-mattermost):
+if [[ -n "${MATTERMOST_URL:-}" ]]; then
+  _MM="${TEAMS_CHAT_MM_READ_SCRIPT:-$HOME/.claude/plugins/marketplaces/[ your-plugins-marketplace ]/teams-chat-mattermost/hooks/scripts/read-mattermost.sh}"
+  if [[ -f "$_MM" ]]; then exec bash "$_MM" "$LIMIT"; fi
+  echo "ERROR: MATTERMOST_URL set but plugin script not found at $_MM (set TEAMS_CHAT_MM_READ_SCRIPT)" >&2
+  exit 1
+fi
 # 1. Slack Web API with a bot token (conversations.history):
 if [[ -n "${TEAM_CHAT_BOT_TOKEN:-}" ]]; then
   curl -sS -H "Authorization: Bearer $TEAM_CHAT_BOT_TOKEN" \

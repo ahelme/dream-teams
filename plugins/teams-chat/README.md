@@ -1,10 +1,10 @@
 # teams-chat Plugin
 
-Per-team Slack identity and chat integration via a Slack transport CLI (e.g. pantalk) — ADAPT to your transport.
+Per-team chat identity — transport-free core; pair with teams-chat-mattermost or teams-chat-slack.
 
 ## What It Does
 
-- Gives each team clone a unique Slack identity (emoji + display name)
+- Gives each team clone a unique chat identity (emoji + display name)
 - Provides scripts for posting and reading from `#[ TEAM CHANNEL ]`
 - Auto-posts milestone events (commits, pushes, PRs) via PostToolUse hook
 
@@ -25,7 +25,7 @@ Lives at `<project-root>/.claude/teams-chat.local.md`:
 ```yaml
 ---
 active: true
-channel_id: [ SLACK CHANNEL ID ]
+channel_id: [ CHANNEL ID — Slack or Mattermost ]
 emoji: 🪶
 name: Scripps
 team: mello-scripts-team
@@ -37,7 +37,7 @@ team: mello-scripts-team
 | Script | Purpose |
 |--------|---------|
 | `load-profile.sh` | Source to get `$CHAT_EMOJI`, `$CHAT_NAME`, `$CHAT_CHANNEL`, `$CHAT_ACTIVE` |
-| `post-slack.sh` | Post formatted message: `EMOJI *TEAM (Name)*: message` |
+| `post-chat.sh` | Dispatch a post to the installed transport plugin (mattermost/slack) |
 | `set-profile.sh` | CLI: `set-profile.sh "🪶" "Scripps"` — auto-detects team from `$PWD` |
 
 ## Skill Integration
@@ -46,7 +46,7 @@ Skills (`/us`, `/cs`, `/up`) reference these scripts:
 
 ```bash
 source ~/.claude/plugins/teams-chat/hooks/scripts/load-profile.sh
-~/.claude/plugins/teams-chat/hooks/scripts/post-slack.sh "message"
+~/.claude/plugins/[ marketplace ]/teams-chat/hooks/scripts/post-chat.sh "message"
 ```
 
 ## Note on Symlinked `.claude/` Dirs
