@@ -18,10 +18,11 @@ dream-teams/
 └── PRIVATE_move-up-one-directory-into-project-dir/
     └── .claude/
         ├── agent_docs/        ← shared docs: ADR/, analysis/, plans/, progress templates,
-        │                        untracked/all-teams-session-log.md
+        │                        untracked/session-logs/<agent>.md (write yours ONLY),
+        │                        untracked/all-teams-session-log.md (GENERATED)
         ├── agent_tools/       ← provisioning: new-team.sh, apply-links.sh,
         │                        file-paths-registry.sh, team-links.json.template,
-        │                        bin/team-say, bin/team-hear, ralph_loop/
+        │                        bin/team-say, bin/team-hear, bin/team-log, ralph_loop/
         ├── hooks/             ← block-secrets.sh, graphify-nudge.sh
         ├── skills/            ← 37 skills (tables below)
         ├── settings.json      ← shared Claude Code settings (hooks wiring)
@@ -162,6 +163,16 @@ all-teams-session-log.md -> ../PRIVATE/.claude/agent_docs/untracked/all-teams-se
 
 `agent_tools/apply-links.sh` automates the `.claude/*` links (after you set
 `file-paths-registry.sh`); `new-team.sh` provisions a whole clone.
+
+> **Session logs are per-agent + stitched.** No agent writes the combined
+> `all-teams-session-log.md` — each prepends to their own
+> `agent_docs/untracked/session-logs/<agent-slug>.md` and runs
+> `agent_tools/bin/team-log`, which regenerates the combined newest-first
+> view (the clone-root symlink above points at that generated view, so
+> *reading* works exactly as before). One agent = one file kills write
+> contention between concurrent sessions today — and if the logs ever move
+> into a git-synced teams repo, per-agent files mean no merge conflicts
+> either.
 
 ## 4. Per-agent untracked files
 

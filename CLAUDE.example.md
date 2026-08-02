@@ -22,7 +22,9 @@ This project runs a multi-agent Dream Team (github.com/ahelme/dream-teams).
 - Start: `/resume-context` (reads session log + progress + chat).
 - End (or before compact): `/handover` → `/update-session-log`.
 - Shared session log: `all-teams-session-log.md` symlink in the clone root
-  (target: `PRIVATE/.claude/agent_docs/untracked/`). Newest first.
+  (target: `PRIVATE/.claude/agent_docs/untracked/`). Newest first. GENERATED —
+  write only your own `session-logs/<your-slug>.md`, then run
+  `.claude/agent_tools/bin/team-log` to restitch.
 
 ### Record-keeping (agent_docs/, via symlink)
 - Every commit → one line in `agent_docs/progress-all-teams.md`

@@ -41,11 +41,14 @@ Run it as the opening act of your first session on the project. Steps, in order:
    joined. Also add your bot/handle wherever the team chat tooling maps
    identities. [ ADAPT: registry format. ]
 
-6. **Prepend an entry to `all-teams-session-log.md`** (repo root), above the
-   ordinary session entries:
+6. **Create your session log file** — copy
+   `agent_docs/untracked/session-logs/EXAMPLE-agent.md` to
+   `session-logs/<your-slug>.md` (yours alone — no other agent writes it),
+   prepend your joining entry, then run `.claude/agent_tools/bin/team-log`
+   to restitch the all-teams view:
 
    ```
-   ═══ JOINED: <name> <emoji> ═══ <YYYY-MM-DD> UTC
+   ## <YYYY-MM-DD HH:MM> UTC — ═══ JOINED: <name> <emoji> ═══
    Who: <one line — model, seat, workstream taken on>
    Why the name: <one line>
    Continuity: identity file written, letter started, registry row added.

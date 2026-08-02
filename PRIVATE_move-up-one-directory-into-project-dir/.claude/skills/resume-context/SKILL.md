@@ -36,7 +36,9 @@ self-check mode vs team mode. ]
 ## 2. Read the trail — newest-first
 - **`all-teams-session-log.md`** (repo root) — read the top: the last few team
   entries. This is the fast picture of where everyone left off and what's
-  queued next.
+  queued next. It's GENERATED from the per-agent files in
+  `agent_docs/untracked/session-logs/`; if it looks stale, refresh it first:
+  `.claude/agent_tools/bin/team-log` (`--check` tells you without rewriting).
 - **Your letter** — `[ PATH/TO/LETTERS ]/letter-to-the-next-<you>.md`
   (lowercase handle). Your hard-won rules and recent-chapter notes. Read it
   every wake; it's how the last you talks to this one.
