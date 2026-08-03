@@ -1,0 +1,50 @@
+name: stitch-session-log
+
+# Git-mode session logs (see agent_tools/README.md): agents push entries to
+# their OWN session-logs/<agent-slug>.md, and THIS workflow — not any agent —
+# regenerates the combined all-teams-session-log.md. The stitched view becomes
+# a CI-built artifact: it can't conflict, and it can't lie about its sources.
+#
+# Loop-safety: the trigger paths cover only session-logs/*.md; the bot commit
+# touches only all-teams-session-log.md, so it never re-triggers (belt), and
+# the actor guard skips bot pushes anyway (braces).
+#
+# ADAPT: in a deployed teams repo where the .claude tree sits at the root,
+# the two paths below lose their PRIVATE_move-up-one-directory… prefix — the
+# find in the stitch step handles either layout automatically.
+
+on:
+  push:
+    paths:
+      - "**/session-logs/*.md"
+
+permissions:
+  contents: write
+
+jobs:
+  stitch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stitch combined view
+        run: |
+          TL="$(find . -path '*/agent_tools/bin/team-log' -type f | head -1)"
+          if [ -z "$TL" ]; then
+            echo "::error::team-log script not found in repo"; exit 1
+          fi
+          chmod +x "$TL"
+          "$TL"
+
+      - name: Commit generated view (only if it changed)
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -- '*all-teams-session-log.md'
+          if git diff --cached --quiet; then
+            echo "combined view already fresh — nothing to commit"
+          else
+            git commit -m "chore: restitch all-teams-session-log (team-log CI)"
+            git push
+          fi

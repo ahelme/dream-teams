@@ -19,7 +19,7 @@ itself, so any team can run them without copying anything.
 | `apply-links.sh` | 1.0.0 | Idempotently apply a clone's Teams-system wiring from its toggles. Also the "update an existing team to current settings" tool. |
 | `file-paths-registry.sh` | 1.0.0 | The single place hard-coded dev-server paths live. Edit here when repos move. |
 | `team-links.json.template` | — | Template for a clone's per-clone toggle file. |
-| `bin/team-log` | 1.0.0 | Stitch per-agent `session-logs/<agent>.md` files into the generated `all-teams-session-log.md` (newest-first). `--check` reports staleness. |
+| `bin/team-log` | 1.0.0 | Stitch per-agent `session-logs/<agent>.md` files into the generated `all-teams-session-log.md` (newest-first). `--check` reports staleness. In git mode, the `stitch-session-log` GitHub Action (repo root `.github/workflows/`) runs it centrally on every push touching `session-logs/**` — the combined view becomes a CI artifact no agent ever writes. |
 
 Bump the `# VERSION:` header in a script **and** this table together when you change one.
 
