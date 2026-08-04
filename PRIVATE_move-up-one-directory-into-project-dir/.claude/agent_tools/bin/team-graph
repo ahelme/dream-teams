@@ -5,6 +5,7 @@ Usage:
   team-graph validate team.yaml
   team-graph scaffold team.yaml [--dry-run]
   team-graph mermaid  team.yaml
+  team-graph ascii    team.yaml       # org chart as a YAML comment block
   team-graph catalogue [kit-root]     # print a catalogue: block scanned from disk
 
 team.yaml is the single source of truth (docs/TEAM-GRAPH-SCHEMA.md).
@@ -132,6 +133,11 @@ def scaffold(cfg, dry):
             with open(path, "w") as f:
                 f.write(content)
 
+    claude_md = cfg.get("claude_md")
+    if claude_md and not os.path.exists(claude_md):
+        print(f"  missing  {claude_md} (claude_md points at a file that "
+              f"doesn't exist yet — create it before deploying)")
+
     ch = cfg["channels"]
     for a in cfg["agents"]:
         git = a.get("git") or {}
@@ -154,6 +160,29 @@ def scaffold(cfg, dry):
     for p in skipped:
         print(f"  kept     {p}")
     print(f"{len(made)} {verb}, {len(skipped)} left untouched")
+
+
+def ascii_graph(cfg):
+    """Same comment block the web configurator embeds at the top of team.yaml:
+    the org chart travels inside the file, so PR diffs show shape changes."""
+    ch, graph = cfg["channels"], cfg.get("graph") or {}
+    csv_ = lambda v: v or []
+    L = [f"┌─ org graph ─ {cfg['project'].get('name', 'team')}"]
+    for u in cfg.get("users") or []:
+        L.append(f"│ {u.get('handle', '?')} ({u.get('role', 'human')}) ─── {ch['main']}")
+    if graph.get("team_coach"):
+        names = ", ".join(a.get("name", "?") for a in cfg["agents"])
+        L.append(f"│ ◇ coach ┈┈ {names}   via {ch['coaching']}")
+    for a in cfg["agents"]:
+        dep = " ▲deploy" if graph.get("team_deployer") == a.get("name") else ""
+        w = csv_((a.get("shared_files") or {}).get("write"))
+        L.append(f"│ ● {a.get('name', '?')} [{a.get('permissions', '?')}{dep}]"
+                 f" ─── {ch['main']}" + (f" ═▶ {', '.join(w)}" if w else ""))
+    for x in ch.get("extra") or []:
+        L.append(f"│ ▢ {x.get('name', '?')}"
+                 + (f" — {x['purpose']}" if x.get("purpose") else ""))
+    L.append("└" + "─" * (max(len(l) for l in L) - 1))
+    return "\n".join("# " + l for l in L)
 
 
 def mermaid(cfg):
@@ -196,7 +225,7 @@ def main():
                              default_flow_style=False, sort_keys=False))
         return
 
-    if cmd not in ("validate", "scaffold", "mermaid") or len(sys.argv) < 3:
+    if cmd not in ("validate", "scaffold", "mermaid", "ascii") or len(sys.argv) < 3:
         sys.exit(__doc__)
     cfg = load(sys.argv[2])
     errs = validate(cfg)
@@ -213,6 +242,8 @@ def main():
         scaffold(cfg, dry="--dry-run" in sys.argv)
     elif cmd == "mermaid":
         print(mermaid(cfg))
+    elif cmd == "ascii":
+        print(ascii_graph(cfg))
 
 
 if __name__ == "__main__":
