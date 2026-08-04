@@ -244,3 +244,8 @@ team-graph mermaid  team.yaml    # the graph, drawn — paste into any README
 
 The YAML is committed; secrets never go in it (channel *names* yes, tokens
 no — those stay in env files / the secrets mount).
+
+The loop closes with DreamContainer: `dream fleet team.yaml` reads the same
+org graph and provisions one agent container per node — identity
+(AGENT_NAME/ROLE/PERMISSIONS/BRANCH_PATTERN) stamped from the YAML, one
+scoped token per agent. Declare the graph once; the fleet follows it.
