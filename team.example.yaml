@@ -1,0 +1,105 @@
+# Dream Teams Agents Graph — example team
+# Schema reference: docs/TEAM-GRAPH-SCHEMA.md
+# Validate:  team-graph validate team.yaml
+# Scaffold:  team-graph scaffold team.yaml
+# Diagram:   team-graph mermaid team.yaml
+
+version: 1
+
+project:
+  name: split-app
+  description: "Split the monolith into services"
+  repo: ahelme/split-app
+
+channels:
+  main: "#split-app"
+  coaching: "#split-app-coach"
+  extra:
+    - name: "#split-app-alerts"
+      purpose: "CI + monitoring noise, so main stays humane"
+
+claude_md: CLAUDE.md
+
+catalogue:
+  skills: [adr, backup-check, celebrate, check-versions, check-waker,
+           create-release, deploy-prod, deploy-test, dry, ears, fix, gi,
+           grafana, ground, handover, health-check, inv, issue, loki,
+           monitoring-check, new-identity, pr-prod, pr-test, prometheus,
+           pull-main, pull-test, rb, relax-unwind, resume-context,
+           review-pr-comments, smoko, terse-style, update-progress,
+           update-session-log, update-slack-app-per-agent]
+  hooks: [block-secrets, graphify-nudge]
+  plugins: [teams-chat, teams-chat-slack, teams-chat-mattermost,
+            team-detect, cleanup-orphaned-mcp]
+  agent_docs: [ADR, analysis, plans]
+
+users:
+  - handle: "@aeh"
+    role: operator
+    timezone: Australia/Sydney
+    notify: [blockers, milestones]
+    github: ahelme
+
+messaging:
+  app: mattermost
+  config: plugins/teams-chat-mattermost/README.md
+
+graph:
+  team_coach: true
+  team_deployer: patch
+  agents: 3
+
+agents:
+  - name: patch
+    role: backend
+    identity: .claude/identities/patch.md
+    context_files: []
+    permissions: trusted
+    shared_files:
+      read: [services/, docs/]
+      write: [services/billing/]
+    enable:
+      skills: [fix, dry, handover, deploy-test, update-session-log,
+               update-progress, resume-context]
+      hooks: [block-secrets]
+      plugins: [teams-chat, teams-chat-mattermost]
+      agent_docs: [ADR, plans]
+    git:
+      branch_pattern: "claude/{agent}-{feature}"
+      rotation: per-feature
+
+  - name: weave
+    role: frontend
+    identity: .claude/identities/weave.md
+    context_files: []
+    permissions: default
+    shared_files:
+      read: [services/, docs/, web/]
+      write: [web/]
+    enable:
+      skills: [fix, dry, handover, update-session-log, update-progress,
+               resume-context]
+      hooks: [block-secrets]
+      plugins: [teams-chat, teams-chat-mattermost]
+      agent_docs: [ADR, plans]
+    git:
+      branch_pattern: "claude/{agent}-{feature}"
+      rotation: per-feature
+
+  - name: scout
+    role: qa
+    identity: .claude/identities/scout.md
+    context_files: [.claude/agent_docs/analysis/known-flakes.md]
+    permissions: readonly
+    shared_files:
+      read: [services/, web/, docs/]
+      write: []
+    enable:
+      skills: [health-check, ears, ground, update-session-log,
+               update-progress, resume-context]
+      hooks: [block-secrets]
+      plugins: [teams-chat, teams-chat-mattermost]
+      agent_docs: [ADR, analysis]
+    git:
+      branch_pattern: "claude/{agent}-qa-{date}"
+      rotation: per-session

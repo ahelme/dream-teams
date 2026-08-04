@@ -1,0 +1,219 @@
+#!/usr/bin/env python3
+"""team-graph — validate, scaffold, and draw a Dream Teams Agents Graph.
+
+Usage:
+  team-graph validate team.yaml
+  team-graph scaffold team.yaml [--dry-run]
+  team-graph mermaid  team.yaml
+  team-graph catalogue [kit-root]     # print a catalogue: block scanned from disk
+
+team.yaml is the single source of truth (docs/TEAM-GRAPH-SCHEMA.md).
+scaffold derives the filesystem from it: identity stubs, per-agent session
+logs, and a teams-chat profile per agent. It never overwrites a file that
+already exists — re-running after hand-edits is safe.
+"""
+import sys, os, json
+
+try:
+    import yaml
+except ImportError:
+    sys.exit("team-graph needs PyYAML: pip install pyyaml (or apt install python3-yaml)")
+
+VALID_PERMS = {"readonly", "default", "trusted"}
+VALID_ROTATION = {"per-feature", "per-session", "fixed"}
+VALID_APPS = {"mattermost", "slack", "other"}
+
+
+def load(path):
+    with open(path) as f:
+        cfg = yaml.safe_load(f)
+    if not isinstance(cfg, dict):
+        sys.exit(f"{path}: not a mapping at top level")
+    return cfg
+
+
+def validate(cfg):
+    errs = []
+    need = lambda cond, msg: None if cond else errs.append(msg)
+
+    need(cfg.get("version") == 1, "version: must be 1")
+    proj = cfg.get("project") or {}
+    need(proj.get("name"), "project.name is required")
+    ch = cfg.get("channels") or {}
+    need(ch.get("main"), "channels.main is required")
+    need(ch.get("coaching"), "channels.coaching is required")
+    msg = cfg.get("messaging") or {}
+    need(msg.get("app") in VALID_APPS, f"messaging.app must be one of {sorted(VALID_APPS)}")
+
+    cat = cfg.get("catalogue") or {}
+    agents = cfg.get("agents") or []
+    graph = cfg.get("graph") or {}
+
+    need(isinstance(agents, list) and agents, "agents: must be a non-empty list")
+    declared = graph.get("agents")
+    need(declared == len(agents),
+         f"graph.agents says {declared} but agents: lists {len(agents)}")
+
+    deployer = graph.get("team_deployer")
+    names = [a.get("name") for a in agents]
+    need(len(names) == len(set(names)), f"agent names must be unique: {names}")
+    if deployer not in (False, None):
+        need(deployer in names, f"graph.team_deployer '{deployer}' is not an agent name")
+
+    for a in agents:
+        n = a.get("name") or "<unnamed>"
+        need(a.get("name"), "every agent needs a name")
+        need(a.get("permissions") in VALID_PERMS,
+             f"agent {n}: permissions must be one of {sorted(VALID_PERMS)}")
+        git = a.get("git") or {}
+        need(git.get("rotation") in VALID_ROTATION,
+             f"agent {n}: git.rotation must be one of {sorted(VALID_ROTATION)}")
+        need("{agent}" in (git.get("branch_pattern") or ""),
+             f"agent {n}: git.branch_pattern must contain {{agent}}")
+        ro = a.get("permissions") == "readonly"
+        writes = (a.get("shared_files") or {}).get("write") or []
+        need(not (ro and writes),
+             f"agent {n}: readonly permissions but shared_files.write is non-empty")
+        enable = a.get("enable") or {}
+        for kind in ("skills", "hooks", "plugins", "agent_docs"):
+            allowed = set(cat.get(kind) or [])
+            for item in enable.get(kind) or []:
+                need(item in allowed,
+                     f"agent {n}: enables {kind[:-1]} '{item}' not in catalogue.{kind}")
+    return errs
+
+
+def scan_catalogue(root):
+    """Build a catalogue: block from a kit checkout / deployed project dir."""
+    dot = os.path.join(root, ".claude")
+    if not os.path.isdir(dot):
+        # kit layout: the .claude tree lives under the PRIVATE_ staging dir
+        for d in sorted(os.listdir(root)):
+            cand = os.path.join(root, d, ".claude")
+            if d.startswith("PRIVATE_") and os.path.isdir(cand):
+                dot = cand
+                break
+    listdir = lambda p: sorted(os.listdir(p)) if os.path.isdir(p) else []
+    return {
+        "skills": [d for d in listdir(os.path.join(dot, "skills"))
+                   if os.path.isfile(os.path.join(dot, "skills", d, "SKILL.md"))],
+        "hooks": [f[:-3] for f in listdir(os.path.join(dot, "hooks")) if f.endswith(".sh")],
+        "plugins": [d for d in listdir(os.path.join(root, "plugins"))
+                    if os.path.isdir(os.path.join(root, "plugins", d, ".claude-plugin"))],
+        "agent_docs": [d for d in listdir(os.path.join(dot, "agent_docs"))
+                       if os.path.isdir(os.path.join(dot, "agent_docs", d))
+                       and d != "untracked"],
+    }
+
+
+IDENTITY_STUB = """# {name} — {role}
+
+You are **{name}**, the team's {role}.
+
+<!-- Fill in: voice, priorities, what you refuse to do, how you hand over. -->
+
+- Project: {project}
+- Main channel: {main}  ·  Coaching: {coaching}
+- Branch pattern: `{branch}` (rotation: {rotation})
+- Write access: {writes}
+"""
+
+
+def scaffold(cfg, dry):
+    made, skipped = [], []
+
+    def put(path, content):
+        if os.path.exists(path):
+            skipped.append(path)
+            return
+        made.append(path)
+        if not dry:
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, "w") as f:
+                f.write(content)
+
+    ch = cfg["channels"]
+    for a in cfg["agents"]:
+        git = a.get("git") or {}
+        put(a.get("identity") or f".claude/identities/{a['name']}.md",
+            IDENTITY_STUB.format(
+                name=a["name"], role=a.get("role", "agent"),
+                project=cfg["project"]["name"], main=ch["main"],
+                coaching=ch["coaching"], branch=git.get("branch_pattern", ""),
+                rotation=git.get("rotation", ""),
+                writes=", ".join((a.get("shared_files") or {}).get("write") or ["—"])))
+        put(f".claude/agent_docs/untracked/session-logs/{a['name']}.md",
+            f"# session log — {a['name']}\n")
+        put(f".claude/teams-chat/{a['name']}.md",
+            f"# teams-chat profile — {a['name']}\nchannel: {ch['main']}\n"
+            f"role: {a.get('role', 'agent')}\n")
+
+    verb = "would create" if dry else "created"
+    for p in made:
+        print(f"  {verb}  {p}")
+    for p in skipped:
+        print(f"  kept     {p}")
+    print(f"{len(made)} {verb}, {len(skipped)} left untouched")
+
+
+def mermaid(cfg):
+    ch, graph = cfg["channels"], cfg.get("graph") or {}
+    out = ["graph TD"]
+    out.append(f'  MAIN(["{ch["main"]}"])')
+    out.append(f'  COACHCH(["{ch["coaching"]}"])')
+    for x in ch.get("extra") or []:
+        nid = "X" + "".join(c for c in x["name"] if c.isalnum())
+        out.append(f'  {nid}(["{x["name"]}"])')
+    if graph.get("team_coach"):
+        out.append('  coach{{coach}}')
+        out.append("  coach --> COACHCH")
+    for u in cfg.get("users") or []:
+        uid = "U" + "".join(c for c in u["handle"] if c.isalnum())
+        out.append(f'  {uid}["{u["handle"]} ({u.get("role", "human")})"]')
+        out.append(f"  {uid} --> MAIN")
+    for a in cfg["agents"]:
+        n, role = a["name"], a.get("role", "agent")
+        badge = " 🚀" if graph.get("team_deployer") == n else ""
+        out.append(f'  {n}("{n} · {role}{badge}")')
+        out.append(f"  {n} --> MAIN")
+        if graph.get("team_coach"):
+            out.append(f"  coach -.-> {n}")
+        for w in (a.get("shared_files") or {}).get("write") or []:
+            wid = "W" + "".join(c for c in w if c.isalnum())
+            out.append(f'  {wid}[/"{w}"/]')
+            out.append(f"  {n} ==> {wid}")
+    return "\n".join(out)
+
+
+def main():
+    if len(sys.argv) < 2:
+        sys.exit(__doc__)
+    cmd = sys.argv[1]
+
+    if cmd == "catalogue":
+        root = sys.argv[2] if len(sys.argv) > 2 else "."
+        print(yaml.safe_dump({"catalogue": scan_catalogue(root)},
+                             default_flow_style=False, sort_keys=False))
+        return
+
+    if cmd not in ("validate", "scaffold", "mermaid") or len(sys.argv) < 3:
+        sys.exit(__doc__)
+    cfg = load(sys.argv[2])
+    errs = validate(cfg)
+    if errs:
+        for e in errs:
+            print(f"✗ {e}", file=sys.stderr)
+        sys.exit(f"{len(errs)} error(s) — fix team.yaml and re-run")
+
+    if cmd == "validate":
+        print(f"✓ valid — {len(cfg['agents'])} agents, "
+              f"coach={'y' if (cfg.get('graph') or {}).get('team_coach') else 'n'}, "
+              f"app={cfg['messaging']['app']}")
+    elif cmd == "scaffold":
+        scaffold(cfg, dry="--dry-run" in sys.argv)
+    elif cmd == "mermaid":
+        print(mermaid(cfg))
+
+
+if __name__ == "__main__":
+    main()

@@ -219,3 +219,28 @@ before grepping; it silently no-ops until a graph exists. The nudge script
 excludes `.md` docs by default (in case docs are stale) — once your docs are
 trustworthy, edit the script's extension list to re-include them (ideally ALL
 `.md` docs).
+
+## 9. Agents Graph — configure the whole team as one YAML
+
+`team.yaml` describes the team as a graph — agents, channels, permissions,
+file-access edges, and which catalogue pieces (skills/hooks/plugins/
+agent_docs) each agent enables. Three ways in:
+
+- **Web form**: open `configurator/index.html` in any browser (no server, no
+  network) — fill in the sections, watch the live YAML pane, download.
+- **By hand**: copy `team.example.yaml`, edit; schema in
+  `docs/TEAM-GRAPH-SCHEMA.md`.
+- **From an existing checkout**: `team-graph catalogue .` scans what actually
+  exists and prints the `catalogue:` block.
+
+Then let the CLI do the rest (needs `python3` + PyYAML):
+
+```
+team-graph validate team.yaml    # loud errors, exact locations
+team-graph scaffold team.yaml    # identity stubs, session logs, chat profiles
+                                 # (never overwrites — re-run freely)
+team-graph mermaid  team.yaml    # the graph, drawn — paste into any README
+```
+
+The YAML is committed; secrets never go in it (channel *names* yes, tokens
+no — those stay in env files / the secrets mount).

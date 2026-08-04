@@ -1,0 +1,462 @@
+<title>Dream Teams · Agents Graph Configurator</title>
+<style>
+  :root {
+    --ground: #F6F7F4; --panel: #FFFFFF; --ink: #212A28; --muted: #64716C;
+    --line: #D8DEDA; --accent: #0E7B6C; --accent-ink: #FFFFFF;
+    --key: #B07C1F; --danger: #B3402E; --code-bg: #1B2422; --code-ink: #DDE6E1;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+    --body: Seravek, "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) { :root {
+    --ground: #131A18; --panel: #1B2422; --ink: #E4EAE6; --muted: #93A19B;
+    --line: #2C3833; --accent: #3FB9A5; --accent-ink: #0E1613;
+    --key: #D9A441; --danger: #D96A55; --code-bg: #0E1412; --code-ink: #D5DFD9;
+  }}
+  :root[data-theme="dark"] {
+    --ground: #131A18; --panel: #1B2422; --ink: #E4EAE6; --muted: #93A19B;
+    --line: #2C3833; --accent: #3FB9A5; --accent-ink: #0E1613;
+    --key: #D9A441; --danger: #D96A55; --code-bg: #0E1412; --code-ink: #D5DFD9;
+  }
+  :root[data-theme="light"] {
+    --ground: #F6F7F4; --panel: #FFFFFF; --ink: #212A28; --muted: #64716C;
+    --line: #D8DEDA; --accent: #0E7B6C; --accent-ink: #FFFFFF;
+    --key: #B07C1F; --danger: #B3402E; --code-bg: #1B2422; --code-ink: #DDE6E1;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ground); color: var(--ink);
+         font: 15px/1.55 var(--body); }
+  header { padding: 28px 24px 20px; border-bottom: 1px solid var(--line); }
+  header h1 { font: 600 22px/1.2 var(--mono); margin: 0 0 4px;
+              letter-spacing: -0.02em; text-wrap: balance; }
+  header h1 .dot { color: var(--accent); }
+  header p { margin: 0; color: var(--muted); max-width: 62ch; }
+  .wrap { display: grid; grid-template-columns: minmax(340px, 1fr) minmax(320px, 44%);
+          gap: 20px; padding: 20px 24px 60px; align-items: start; }
+  @media (max-width: 860px) { .wrap { grid-template-columns: 1fr; } }
+
+  section.card { background: var(--panel); border: 1px solid var(--line);
+                 border-radius: 6px; padding: 16px 18px; margin: 0 0 16px; }
+  section.card h2 { font: 600 13px/1.3 var(--mono); text-transform: uppercase;
+                    letter-spacing: 0.08em; color: var(--accent); margin: 0 0 12px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field { display: flex; flex-direction: column; gap: 3px; }
+  .field span { font: 500 11px/1.3 var(--mono); letter-spacing: 0.05em;
+                color: var(--muted); text-transform: uppercase; }
+  input[type=text], select, textarea {
+    font: 14px var(--mono); color: var(--ink); background: var(--ground);
+    border: 1px solid var(--line); border-radius: 4px; padding: 6px 8px; }
+  input:focus-visible, select:focus-visible, textarea:focus-visible,
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .row { display: flex; gap: 8px; align-items: end; flex-wrap: wrap; margin: 8px 0 0; }
+  .row .field { flex: 1; min-width: 120px; }
+  button { font: 500 13px var(--mono); border-radius: 4px; padding: 6px 12px;
+           border: 1px solid var(--line); background: var(--panel);
+           color: var(--ink); cursor: pointer; }
+  button:hover { border-color: var(--accent); color: var(--accent); }
+  button.primary { background: var(--accent); color: var(--accent-ink);
+                   border-color: var(--accent); }
+  button.primary:hover { filter: brightness(1.08); color: var(--accent-ink); }
+  button.del { color: var(--danger); border: none; background: none;
+               padding: 6px 4px; font-size: 15px; line-height: 1; }
+  .tagbox { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 2px; }
+  .tag { display: inline-flex; align-items: center; gap: 6px; font: 12px var(--mono);
+         background: var(--ground); border: 1px solid var(--line);
+         border-radius: 999px; padding: 3px 6px 3px 10px; }
+  .tag button { border: none; background: none; padding: 0 4px; color: var(--muted);
+                font-size: 13px; }
+  .tag button:hover { color: var(--danger); }
+  .hint { font-size: 12.5px; color: var(--muted); margin: 6px 0 0; }
+  .agent { border: 1px solid var(--line); border-radius: 6px; padding: 14px;
+           margin: 0 0 12px; background: var(--ground); }
+  .agent h3 { font: 600 14px var(--mono); margin: 0 0 10px; display: flex;
+              align-items: center; gap: 8px; }
+  .agent h3::before { content: "●"; color: var(--accent); font-size: 11px; }
+  .agent h3 .spacer { flex: 1; }
+  .enable { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 2px 10px; margin: 4px 0 0; }
+  .enable label { font: 12.5px var(--mono); display: flex; gap: 6px;
+                  align-items: center; }
+  fieldset { border: 1px dashed var(--line); border-radius: 4px; margin: 10px 0 0;
+             padding: 8px 10px 10px; }
+  legend { font: 500 11px var(--mono); color: var(--muted);
+           text-transform: uppercase; letter-spacing: 0.05em; padding: 0 4px; }
+  .pane { position: sticky; top: 16px; }
+  .pane .bar { display: flex; gap: 8px; align-items: center; margin: 0 0 8px; }
+  .pane .bar h2 { font: 600 13px var(--mono); text-transform: uppercase;
+                  letter-spacing: 0.08em; margin: 0; flex: 1; color: var(--muted); }
+  #yamlout { background: var(--code-bg); color: var(--code-ink); border-radius: 6px;
+             padding: 16px; font: 12.5px/1.55 var(--mono); overflow: auto;
+             max-height: 82vh; white-space: pre; tab-size: 2; margin: 0; }
+  #yamlout .k { color: var(--key); }
+  #yamlout .c { color: #7C8F87; }
+  .radio { display: flex; gap: 14px; align-items: center; }
+  .radio label { display: flex; gap: 6px; align-items: center; font: 13px var(--mono); }
+  #toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+           background: var(--accent); color: var(--accent-ink); border-radius: 4px;
+           padding: 8px 16px; font: 13px var(--mono); opacity: 0;
+           transition: opacity .25s; pointer-events: none; }
+  @media (prefers-reduced-motion: reduce) { #toast { transition: none; } }
+</style>
+
+<header>
+  <h1>Dream Teams <span class="dot">·</span> Agents Graph Configurator</h1>
+  <p>Describe your team once — agents, channels, permissions, and what each
+     node may touch — and download a <code>team.yaml</code> that
+     <code>team-graph</code> validates, scaffolds, and draws. Edits persist in
+     this browser until you clear them.</p>
+</header>
+
+<div class="wrap">
+<main id="form"></main>
+<aside class="pane">
+  <div class="bar">
+    <h2>team.yaml — live</h2>
+    <button id="copy">Copy</button>
+    <button id="dl" class="primary">Download team.yaml</button>
+  </div>
+  <pre id="yamlout" aria-live="polite"></pre>
+</aside>
+</div>
+<div id="toast" role="status"></div>
+
+<script>
+"use strict";
+// ---- default state: the kit's real catalogue, one starter agent ----------
+const KIT = {
+  skills: ["adr","backup-check","celebrate","check-slack-app-per-agent",
+    "check-slack-shared-slack-app","check-versions","check-waker","create-release",
+    "deploy-prod","deploy-test","dry","ears","fix","gi","grafana","ground",
+    "handover","health-check","inv","issue","loki","monitoring-check",
+    "new-identity","pr-prod","pr-test","prometheus","pull-main","pull-test","rb",
+    "relax-unwind","resume-context","review-pr-comments","smoko","terse-style",
+    "update-progress","update-session-log","update-slack-app-per-agent"],
+  hooks: ["block-secrets","graphify-nudge"],
+  plugins: ["teams-chat","teams-chat-slack","teams-chat-mattermost",
+            "team-detect","cleanup-orphaned-mcp"],
+  agent_docs: ["ADR","analysis","plans"],
+};
+const newAgent = (name) => ({ name, role: "", permissions: "default",
+  read: "", write: "", branch: "claude/{agent}-{feature}", rotation: "per-feature",
+  context: "", enable: { skills: ["fix","handover","update-session-log",
+    "update-progress","resume-context"], hooks: ["block-secrets"],
+    plugins: ["teams-chat"], agent_docs: ["ADR"] } });
+let S = {
+  project: { name: "", description: "", repo: "" },
+  channels: { main: "", coaching: "", extra: [] },
+  claude_md: "CLAUDE.md",
+  catalogue: JSON.parse(JSON.stringify(KIT)),
+  users: [{ handle: "", role: "operator", timezone: "", github: "",
+            notify: ["blockers","milestones"] }],
+  messaging: { app: "mattermost" },
+  graph: { team_coach: true, team_deployer: "" },
+  agents: [newAgent("agent-1")],
+};
+try { const saved = localStorage.getItem("dream-team-yaml");
+      if (saved) S = JSON.parse(saved); } catch (e) {}
+
+// ---- YAML emitter --------------------------------------------------------
+const q = (s) => { s = String(s ?? "");
+  return (s === "" || /[#:{}\[\],&*!|>'"%@`]|^[\s-]|[\s]$/.test(s))
+    ? `"${s.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"` : s; };
+const flow = (arr) => "[" + arr.map(q).join(", ") + "]";
+function emit() {
+  const L = [];
+  L.push("# team.yaml — generated by the Dream Teams Agents Graph configurator");
+  L.push("# validate: team-graph validate team.yaml");
+  L.push("version: 1", "");
+  L.push("project:");
+  L.push(`  name: ${q(S.project.name)}`);
+  if (S.project.description) L.push(`  description: ${q(S.project.description)}`);
+  if (S.project.repo) L.push(`  repo: ${q(S.project.repo)}`);
+  L.push("", "channels:");
+  L.push(`  main: ${q(S.channels.main)}`);
+  L.push(`  coaching: ${q(S.channels.coaching)}`);
+  if (S.channels.extra.length) { L.push("  extra:");
+    for (const x of S.channels.extra) { L.push(`    - name: ${q(x.name)}`);
+      if (x.purpose) L.push(`      purpose: ${q(x.purpose)}`); } }
+  L.push("", `claude_md: ${q(S.claude_md)}`, "", "catalogue:");
+  for (const k of ["skills","hooks","plugins","agent_docs"])
+    L.push(`  ${k}: ${flow(S.catalogue[k])}`);
+  L.push("", "users:");
+  for (const u of S.users) { L.push(`  - handle: ${q(u.handle)}`);
+    L.push(`    role: ${q(u.role)}`);
+    if (u.timezone) L.push(`    timezone: ${q(u.timezone)}`);
+    if (u.github) L.push(`    github: ${q(u.github)}`);
+    if (u.notify.length) L.push(`    notify: ${flow(u.notify)}`); }
+  L.push("", "messaging:", `  app: ${S.messaging.app}`);
+  if (S.messaging.app !== "other")
+    L.push(`  config: plugins/teams-chat-${S.messaging.app}/README.md`);
+  L.push("", "graph:");
+  L.push(`  team_coach: ${S.graph.team_coach}`);
+  L.push(`  team_deployer: ${S.graph.team_deployer ? q(S.graph.team_deployer) : "false"}`);
+  L.push(`  agents: ${S.agents.length}`, "", "agents:");
+  for (const a of S.agents) {
+    const csv = (s) => s.split(",").map(x => x.trim()).filter(Boolean);
+    L.push(`  - name: ${q(a.name)}`);
+    L.push(`    role: ${q(a.role)}`);
+    L.push(`    identity: ${q(".claude/identities/" + a.name + ".md")}`);
+    L.push(`    context_files: ${flow(csv(a.context))}`);
+    L.push(`    permissions: ${a.permissions}`);
+    L.push("    shared_files:");
+    L.push(`      read: ${flow(csv(a.read))}`);
+    L.push(`      write: ${flow(csv(a.write))}`);
+    L.push("    enable:");
+    for (const k of ["skills","hooks","plugins","agent_docs"])
+      L.push(`      ${k}: ${flow(a.enable[k])}`);
+    L.push("    git:");
+    L.push(`      branch_pattern: ${q(a.branch)}`);
+    L.push(`      rotation: ${a.rotation}`);
+  }
+  return L.join("\n") + "\n";
+}
+function paint() {
+  const y = emit();
+  document.getElementById("yamlout").innerHTML = y
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+    .replace(/^(\s*)(#.*)$/gm, "$1<span class=c>$2</span>")
+    .replace(/^(\s*(?:- )?)([\w_]+):/gm, "$1<span class=k>$2</span>:");
+  try { localStorage.setItem("dream-team-yaml", JSON.stringify(S)); } catch (e) {}
+}
+
+// ---- form rendering ------------------------------------------------------
+const h = (html) => { const t = document.createElement("template");
+  t.innerHTML = html.trim(); return t.content.firstChild; };
+const bind = (el, get, set) => { el.value = get() ?? "";
+  el.addEventListener("input", () => { set(el.value); paint(); }); };
+
+function tagEditor(title, arr, hint) {
+  const box = h(`<div><div class="tagbox"></div>
+    <div class="row"><div class="field"><span>add ${title}</span>
+    <input type="text"></div><button>Add</button>
+    <button class="up">Upload…</button>
+    <input type="file" multiple hidden></div>
+    ${hint ? `<p class="hint">${hint}</p>` : ""}</div>`);
+  const tags = box.querySelector(".tagbox"), inp = box.querySelector("input[type=text]");
+  const file = box.querySelector("input[type=file]");
+  const redraw = () => { tags.innerHTML = "";
+    arr.forEach((v, i) => { const t = h(`<span class="tag">${v}
+        <button aria-label="remove ${v}">×</button></span>`);
+      t.querySelector("button").onclick = () => { arr.splice(i, 1); redraw(); paint(); };
+      tags.appendChild(t); }); };
+  const add = (v) => { v = v.trim(); if (v && !arr.includes(v)) arr.push(v); };
+  box.querySelectorAll(".row button")[0].onclick =
+    () => { add(inp.value); inp.value = ""; redraw(); paint(); };
+  inp.addEventListener("keydown", (e) => { if (e.key === "Enter")
+    { add(inp.value); inp.value = ""; redraw(); paint(); } });
+  box.querySelector(".up").onclick = () => file.click();
+  file.onchange = () => { for (const f of file.files)
+      add(f.name.replace(/\.(md|sh|ya?ml|json)$/i, ""));
+    redraw(); paint(); };
+  redraw(); return box;
+}
+
+function render() {
+  const F = document.getElementById("form"); F.innerHTML = "";
+  const card = (title) => { const c = h(`<section class="card"><h2>${title}</h2></section>`);
+    F.appendChild(c); return c; };
+
+  // project
+  let c = card("Project");
+  const g = h(`<div class="grid2"></div>`); c.appendChild(g);
+  for (const [label, key] of [["name","name"],["repo (owner/repo)","repo"]]) {
+    const f = h(`<label class="field"><span>${label}</span><input type="text"></label>`);
+    bind(f.querySelector("input"), () => S.project[key], v => S.project[key] = v);
+    g.appendChild(f); }
+  const d = h(`<label class="field" style="margin-top:10px"><span>description</span>
+    <input type="text"></label>`);
+  bind(d.querySelector("input"), () => S.project.description,
+       v => S.project.description = v); c.appendChild(d);
+
+  // channels
+  c = card("Channels");
+  const cg = h(`<div class="grid2"></div>`); c.appendChild(cg);
+  for (const [label, key] of [["main channel #","main"],["coaching channel #","coaching"]]) {
+    const f = h(`<label class="field"><span>${label}</span>
+      <input type="text" placeholder="#team-main"></label>`);
+    bind(f.querySelector("input"), () => S.channels[key], v => S.channels[key] = v);
+    cg.appendChild(f); }
+  const exwrap = h(`<div></div>`); c.appendChild(exwrap);
+  const redrawExtra = () => { exwrap.innerHTML = "";
+    S.channels.extra.forEach((x, i) => {
+      const r = h(`<div class="row"><div class="field"><span>channel</span>
+        <input type="text" class="n"></div><div class="field"><span>purpose</span>
+        <input type="text" class="p"></div>
+        <button class="del" aria-label="delete channel">×</button></div>`);
+      bind(r.querySelector(".n"), () => x.name, v => x.name = v);
+      bind(r.querySelector(".p"), () => x.purpose, v => x.purpose = v);
+      r.querySelector(".del").onclick =
+        () => { S.channels.extra.splice(i, 1); redrawExtra(); paint(); };
+      exwrap.appendChild(r); }); };
+  redrawExtra();
+  const addCh = h(`<div class="row"><button>+ Add channel</button></div>`);
+  addCh.querySelector("button").onclick = () => {
+    S.channels.extra.push({ name: "", purpose: "" }); redrawExtra(); paint(); };
+  c.appendChild(addCh);
+
+  // claude_md
+  c = card("Main CLAUDE.md");
+  const cm = h(`<label class="field"><span>path (committed alongside team.yaml)</span>
+    <input type="text"></label>`);
+  bind(cm.querySelector("input"), () => S.claude_md, v => S.claude_md = v);
+  c.appendChild(cm);
+  c.appendChild(h(`<p class="hint">The YAML points at the file; write the file
+    itself in your editor. <code>team-graph scaffold</code> checks it exists.</p>`));
+
+  // catalogue
+  c = card("Catalogue — skills · hooks · plugins · agent_docs");
+  c.appendChild(h(`<p class="hint">Everything that <em>exists</em> in your kit.
+    Agents enable subsets below. Prefilled from the Dream Teams kit; add your own
+    or upload files to register their names. Regenerate any time with
+    <code>team-graph catalogue</code>.</p>`));
+  for (const k of ["skills","hooks","plugins","agent_docs"]) {
+    const fs = h(`<fieldset><legend>${k}</legend></fieldset>`);
+    fs.appendChild(tagEditor(k.replace("_"," "), S.catalogue[k]));
+    c.appendChild(fs); }
+
+  // users
+  c = card("Users");
+  const uw = h(`<div></div>`); c.appendChild(uw);
+  const redrawUsers = () => { uw.innerHTML = "";
+    S.users.forEach((u, i) => {
+      const r = h(`<div class="row">
+        <div class="field"><span>@handle</span><input type="text" class="h"></div>
+        <div class="field"><span>role</span><select class="r">
+          <option>operator</option><option>reviewer</option><option>stakeholder</option>
+        </select></div>
+        <div class="field"><span>github</span><input type="text" class="g"></div>
+        <div class="field"><span>timezone</span><input type="text" class="t"
+          placeholder="Australia/Sydney"></div>
+        <button class="del" aria-label="delete user">×</button></div>`);
+      bind(r.querySelector(".h"), () => u.handle, v => u.handle = v);
+      bind(r.querySelector(".r"), () => u.role, v => u.role = v);
+      bind(r.querySelector(".g"), () => u.github, v => u.github = v);
+      bind(r.querySelector(".t"), () => u.timezone, v => u.timezone = v);
+      r.querySelector(".del").onclick =
+        () => { S.users.splice(i, 1); redrawUsers(); paint(); };
+      uw.appendChild(r); }); };
+  redrawUsers();
+  const addU = h(`<div class="row"><button>+ Add user</button></div>`);
+  addU.querySelector("button").onclick = () => { S.users.push({ handle: "",
+    role: "operator", timezone: "", github: "", notify: ["blockers"] });
+    redrawUsers(); paint(); };
+  c.appendChild(addU);
+
+  // messaging
+  c = card("Messaging app");
+  const m = h(`<div class="radio">
+    <label><input type="radio" name="app" value="mattermost"> Mattermost</label>
+    <label><input type="radio" name="app" value="slack"> Slack</label>
+    <label><input type="radio" name="app" value="other"> Other</label></div>`);
+  m.querySelectorAll("input").forEach(r => {
+    r.checked = S.messaging.app === r.value;
+    r.onchange = () => { S.messaging.app = r.value; paint(); }; });
+  c.appendChild(m);
+  c.appendChild(h(`<p class="hint">Mattermost/Slack config lives in the matching
+    <code>teams-chat-*</code> plugin README. Tokens never go in team.yaml.</p>`));
+
+  // graph
+  c = card("Graph");
+  const gr = h(`<div class="row">
+    <label class="field" style="flex:0 0 auto"><span>team coach</span>
+      <select class="co"><option value="true">yes</option>
+      <option value="false">no</option></select></label>
+    <label class="field"><span>team deployer (agent)</span>
+      <select class="dep"><option value="">— none —</option></select></label>
+    <div class="field"><span># of agents</span>
+      <input type="text" class="ct" disabled></div></div>`);
+  const dep = gr.querySelector(".dep");
+  for (const a of S.agents) dep.appendChild(h(`<option>${a.name}</option>`));
+  dep.value = S.graph.team_deployer;
+  dep.onchange = () => { S.graph.team_deployer = dep.value; paint(); };
+  const co = gr.querySelector(".co"); co.value = String(S.graph.team_coach);
+  co.onchange = () => { S.graph.team_coach = co.value === "true"; paint(); };
+  gr.querySelector(".ct").value = S.agents.length;
+  c.appendChild(gr);
+  c.appendChild(h(`<p class="hint">Agent count is derived from the cards below —
+    one less thing to keep in sync.</p>`));
+
+  // agents
+  c = card("Agents — the nodes");
+  const aw = h(`<div></div>`); c.appendChild(aw);
+  S.agents.forEach((a, i) => {
+    const el = h(`<div class="agent"><h3><span class="nm"></span>
+      <span class="spacer"></span>
+      <button class="dup">duplicate</button>
+      <button class="del" aria-label="delete agent">×</button></h3></div>`);
+    el.querySelector(".nm").textContent = a.name || "unnamed";
+    el.querySelector(".dup").onclick = () => {
+      const copy = JSON.parse(JSON.stringify(a));
+      copy.name = a.name + "-2"; S.agents.splice(i + 1, 0, copy); render(); paint(); };
+    el.querySelector(".del").onclick =
+      () => { S.agents.splice(i, 1); render(); paint(); };
+    const top = h(`<div class="row">
+      <div class="field"><span>name</span><input type="text" class="n"></div>
+      <div class="field"><span>role</span><input type="text" class="r"
+        placeholder="backend / frontend / qa"></div>
+      <div class="field"><span>permissions</span><select class="p">
+        <option>readonly</option><option>default</option><option>trusted</option>
+      </select></div></div>`);
+    bind(top.querySelector(".n"), () => a.name, v => { a.name = v;
+      el.querySelector(".nm").textContent = v || "unnamed"; });
+    bind(top.querySelector(".r"), () => a.role, v => a.role = v);
+    bind(top.querySelector(".p"), () => a.permissions, v => a.permissions = v);
+    el.appendChild(top);
+    const files = h(`<div class="row">
+      <div class="field"><span>shared read (comma-sep paths)</span>
+        <input type="text" class="rd" placeholder="services/, docs/"></div>
+      <div class="field"><span>shared write</span>
+        <input type="text" class="wr" placeholder="services/billing/"></div></div>`);
+    bind(files.querySelector(".rd"), () => a.read, v => a.read = v);
+    bind(files.querySelector(".wr"), () => a.write, v => a.write = v);
+    el.appendChild(files);
+    const git = h(`<div class="row">
+      <div class="field"><span>branch pattern</span><input type="text" class="b"></div>
+      <div class="field" style="flex:0 0 auto"><span>rotation</span><select class="ro">
+        <option>per-feature</option><option>per-session</option><option>fixed</option>
+      </select></div>
+      <div class="field"><span>context files (comma-sep)</span>
+        <input type="text" class="cx"></div></div>`);
+    bind(git.querySelector(".b"), () => a.branch, v => a.branch = v);
+    bind(git.querySelector(".ro"), () => a.rotation, v => a.rotation = v);
+    bind(git.querySelector(".cx"), () => a.context, v => a.context = v);
+    el.appendChild(git);
+    for (const k of ["skills","hooks","plugins","agent_docs"]) {
+      const fs = h(`<fieldset><legend>enable ${k.replace("_"," ")}</legend>
+        <div class="enable"></div></fieldset>`);
+      const en = fs.querySelector(".enable");
+      for (const item of S.catalogue[k]) {
+        const lb = h(`<label><input type="checkbox"> ${item}</label>`);
+        const cb = lb.querySelector("input");
+        cb.checked = a.enable[k].includes(item);
+        cb.onchange = () => { const set = new Set(a.enable[k]);
+          cb.checked ? set.add(item) : set.delete(item);
+          a.enable[k] = S.catalogue[k].filter(x => set.has(x)); paint(); };
+        en.appendChild(lb); }
+      el.appendChild(fs); }
+    aw.appendChild(el);
+  });
+  const addA = h(`<div class="row"><button class="primary">+ Add agent</button>
+    <button class="reset">Reset all</button></div>`);
+  addA.querySelector(".primary").onclick = () => {
+    S.agents.push(newAgent("agent-" + (S.agents.length + 1))); render(); paint(); };
+  addA.querySelector(".reset").onclick = () => {
+    if (confirm("Clear the whole form and start over?")) {
+      localStorage.removeItem("dream-team-yaml"); location.reload(); } };
+  c.appendChild(addA);
+}
+
+// ---- actions -------------------------------------------------------------
+const toast = (msg) => { const t = document.getElementById("toast");
+  t.textContent = msg; t.style.opacity = 1;
+  setTimeout(() => { t.style.opacity = 0; }, 1600); };
+document.getElementById("copy").onclick = async () => {
+  try { await navigator.clipboard.writeText(emit()); toast("Copied"); }
+  catch (e) { toast("Copy blocked — use Download"); } };
+document.getElementById("dl").onclick = () => {
+  const blob = new Blob([emit()], { type: "text/yaml" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "team.yaml"; a.click();
+  URL.revokeObjectURL(a.href); toast("team.yaml downloaded"); };
+
+render(); paint();
+</script>
